@@ -1,0 +1,7 @@
+!.gitignore
+!.github/**/*.*
+.*
+target
+*.iml
+lib/*.jar
+bin
