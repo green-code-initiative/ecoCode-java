@@ -17,7 +17,7 @@ class ArrayCopyCheck {
         // Copy with Arrays.copyOf()
         dest = Arrays.copyOf(src, src.length);
 
-        System.out.println(dest);
+        System.err.println(dest);
     }
 
     public void nonRegression() {
@@ -41,7 +41,7 @@ class ArrayCopyCheck {
             a = b;
         }
 
-        System.out.println(a);
+        System.err.println(a);
     }
 
     public void copyWithForLoop() {
@@ -64,7 +64,7 @@ class ArrayCopyCheck {
         // Copy with nested ELSE conditions
         for (int i = 0; i < len; i++) {
             if (i + 2 >= len) {
-                System.out.println("just to have a 'if' + 'else'");
+                System.err.println("just to have a 'if' + 'else'");
             } else {
                 dest[i] = src[i + 2];
             }
@@ -78,13 +78,13 @@ class ArrayCopyCheck {
                         if (i > 1 && i + 2 < src.length) {
                             dest[i] = src[i + 2];
                         } else {
-                            System.out.println("just to have a 'else' 1");
+                            System.err.println("just to have a 'else' 1");
                         }
                     } else {
-                        System.out.println("just to have a 'else' 2");
+                        System.err.println("just to have a 'else' 2");
                     }
                 } else {
-                    System.out.println("just to have a 'else' 3");
+                    System.err.println("just to have a 'else' 3");
                 }
             }
         } // Noncompliant
@@ -124,7 +124,7 @@ class ArrayCopyCheck {
         // Copy nested by try/catch in finally
         for (int i = 0; i < len; i++) {
             try {
-                dest.toString();
+                Arrays.toString(dest);
             } catch (RuntimeException e) {
                 e.printStackTrace();
             } finally {
@@ -176,16 +176,16 @@ class ArrayCopyCheck {
                         if (i > 1 && i + 2 < src.length) {
                             dest[++i] = b;
                         } else {
-                            System.out.println("just to have a 'else' 1");
+                            System.err.println("just to have a 'else' 1");
                         }
                     } else {
-                        System.out.println("just to have a 'else' 2");
+                        System.err.println("just to have a 'else' 2");
                     }
                 } else {
-                    System.out.println("just to have a 'else' 3");
+                    System.err.println("just to have a 'else' 3");
                 }
             } else {
-                System.out.println("just to have a 'else' 4");
+                System.err.println("just to have a 'else' 4");
             }
         } // Noncompliant
 
@@ -287,20 +287,20 @@ class ArrayCopyCheck {
                             if (i > 1 && i + 2 < src.length) {
                                 dest[i] = src[i + 2];
                             } else {
-                                System.out.println("just to have a 'else' 1");
+                                System.err.println("just to have a 'else' 1");
                             }
                         } else {
-                            System.out.println("just to have a 'else' 2");
+                            System.err.println("just to have a 'else' 2");
                         }
                     } else {
-                        System.out.println("just to have a 'else' 3");
+                        System.err.println("just to have a 'else' 3");
                     }
                 } else {
-                    System.out.println("just to have a 'else' 4");
+                    System.err.println("just to have a 'else' 4");
                 }
                 i++;
             } else {
-                System.out.println("just to have a 'else' 5");
+                System.err.println("just to have a 'else' 5");
             }
         } // Noncompliant
 
@@ -412,13 +412,13 @@ class ArrayCopyCheck {
                         if (i > 1 && i + 2 < src.length) {
                             dest[i] = src[i + 2];
                         } else {
-                            System.out.println("just to have a 'else' 1");
+                            System.err.println("just to have a 'else' 1");
                         }
                     } else {
-                        System.out.println("just to have a 'else' 2");
+                        System.err.println("just to have a 'else' 2");
                     }
                 } else {
-                    System.out.println("just to have a 'else' 3");
+                    System.err.println("just to have a 'else' 3");
                 }
             }
             i++;
@@ -500,13 +500,13 @@ class ArrayCopyCheck {
                         if (i > 1 && i + 2 < src.length) {
                             dest[i] = src[i + 2];
                         } else {
-                            System.out.println("just to have a 'else' 1");
+                            System.err.println("just to have a 'else' 1");
                         }
                     } else {
-                        System.out.println("just to have a 'else' 2");
+                        System.err.println("just to have a 'else' 2");
                     }
                 } else {
-                    System.out.println("just to have a 'else' 3");
+                    System.err.println("just to have a 'else' 3");
                 }
             }
             i++;
