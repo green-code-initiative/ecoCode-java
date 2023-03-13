@@ -22,7 +22,8 @@ Step 1 : compile and build
 Step 2 : send Sonar metrics to local SonarQube
 ---
 
-before, change the token inside script and then launch `./tool_send_to_sonar.sh`
+- first : change the token inside script (to give your personal SonarQube token, previously generated, please see install documention)
+- secondly : launch `./tool_send_to_sonar.sh`
 
 Step 3 : check errors
 ---
