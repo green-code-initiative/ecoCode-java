@@ -16,7 +16,7 @@ class OptimizeReadFileExceptionCheck3 {
 
     public void readPreferences(String filename) {
         //...
-        try (InputStream in = new FileInputStream(filename)) { // Noncompliant
+        try (InputStream in = new FileInputStream(filename)) { // Noncompliant {{Optimize Read File Exceptions}}
             logger.info("my log");
         } catch (IOException e) {
             logger.info(e.getMessage());

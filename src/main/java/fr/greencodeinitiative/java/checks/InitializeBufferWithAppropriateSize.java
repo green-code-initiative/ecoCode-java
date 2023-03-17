@@ -13,7 +13,7 @@ class InitializeBufferWithAppropriateSize {
 	}
 
 	public void testBufferNonCompliant() {
-		StringBuffer stringBuffer = new StringBuffer(); // Noncompliant
+		StringBuffer stringBuffer = new StringBuffer(); // Noncompliant {{Initialize StringBuilder or StringBuffer with appropriate size}}
 	}
 
 	public void testBuilderCompliant() {
@@ -21,6 +21,6 @@ class InitializeBufferWithAppropriateSize {
 	}
 
 	public void testBuilderNonCompliant() {
-		StringBuilder stringBuilder = new StringBuilder(); // Noncompliant
+		StringBuilder stringBuilder = new StringBuilder(); // Noncompliant {{Initialize StringBuilder or StringBuffer with appropriate size}}
 	}
 }

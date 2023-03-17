@@ -29,4 +29,4 @@ Step 3 : check errors
 ---
 
 on local SonarQube, check if each Java class contains (or not) the rule error defined for this class
-(for example : you can search for tag `eco-conception` rule on a special file)
+(for example : you can search for tag `eco-design` rule on a special file)

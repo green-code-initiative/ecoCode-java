@@ -1,8 +1,8 @@
 package fr.greencodeinitiative.java.checks;
 
 public class AvoidUsingGlobalVariablesCheck {
-    public static double price = 15.24; // Noncompliant
-    public static long pages = 1053; // Noncompliant
+    public static double price = 15.24; // Noncompliant {{Avoid using global variables}}
+    public static long pages = 1053; // Noncompliant {{Avoid using global variables}}
 
     public static void main(String[] args) {
         double newPrice = AvoidUsingGlobalVariablesCheck.price;
@@ -10,7 +10,7 @@ public class AvoidUsingGlobalVariablesCheck {
         System.out.println(newPrice);
         System.out.println(newPages);
     }
-    static{ // Noncompliant
+    static{ // Noncompliant {{Avoid using global variables}}
         int a = 4;
     }
 

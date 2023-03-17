@@ -15,6 +15,6 @@ class AvoidStatementForDMLQueries {
     public void insert() throws SQLException {
         Connection connection = DriverManager.getConnection("URL");
         Statement statement = connection.createStatement();
-        statement.executeUpdate("INSERT INTO persons(id, name) VALUES(2, 'Toto')");  // Noncompliant
+        statement.executeUpdate("INSERT INTO persons(id, name) VALUES(2, 'Toto')");  // Noncompliant {{You must not use Statement for a DML query}}
     }
 }

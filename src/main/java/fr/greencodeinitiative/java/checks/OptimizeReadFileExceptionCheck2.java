@@ -17,7 +17,7 @@ class OptimizeReadFileExceptionCheck2 {
 
     public void readPreferences(String filename) throws IOException {
         //...
-        try (InputStream in = new FileInputStream(filename)) { // Noncompliant
+        try (InputStream in = new FileInputStream(filename)) { // Noncompliant {{Optimize Read File Exceptions}}
             logger.info("my log");
         } catch (FileNotFoundException e) {
             logger.info(e.getMessage());
