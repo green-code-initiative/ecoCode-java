@@ -12,9 +12,9 @@ class UseCorrectForLoopCheck {
 
     public void testForEachLoop() {
         int dummy = 0;
-        for (Integer i : intArray) { // Noncompliant {{Avoid the use of Foreach with Arrays}}
+        for (Integer i : intArray) {
             dummy += i;
-        }
+        } // Noncompliant {{Avoid the use of Foreach with Arrays}}
 
         for (Integer i : intList) {
             dummy += i;
