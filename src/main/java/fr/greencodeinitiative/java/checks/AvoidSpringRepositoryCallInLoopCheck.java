@@ -12,7 +12,7 @@ public class AvoidSpringRepositoryCallInLoopCheck {
     public List<Employee> smellGetAllEmployeesByIds(List<Integer> ids) {
         List<Employee> employees = new ArrayList<>();
         for (Integer id : ids) {
-            Optional<Employee> employee = employeeRepository.findById(id); // Noncompliant {{Avoid Spring repository call in loop}}
+            Optional<Employee> employee = employeeRepository.findById(id); // Noncompliant {{Avoid Spring repository call in loop or stream}}
             if (employee.isPresent()) {
                 employees.add(employee.get());
             }
@@ -21,6 +21,16 @@ public class AvoidSpringRepositoryCallInLoopCheck {
     }
 
     public class Employee {
+        private Integer id;
+        private String name;
+
+        public Employee(Integer id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public Integer getId() { return id; }
+        public String getName() { return name; }
     }
 
     public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
