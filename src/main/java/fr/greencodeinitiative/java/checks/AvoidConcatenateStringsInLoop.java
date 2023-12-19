@@ -41,7 +41,7 @@ public class AvoidConcatenateStringsInLoop extends IssuableSubscriptionVisitor {
     public static final String MESSAGE_RULE = "Don't concatenate Strings in loop, use StringBuilder instead.";
     private static final String STRING_CLASS = String.class.getName();
 
-    private final StringConcatenationVisitor VISITOR = new StringConcatenationVisitor();
+    private final StringConcatenationVisitor visitor = new StringConcatenationVisitor();
 
     @Override
     public List<Tree.Kind> nodesToVisit() {
@@ -54,7 +54,7 @@ public class AvoidConcatenateStringsInLoop extends IssuableSubscriptionVisitor {
 
     @Override
     public void visitNode(@Nonnull Tree tree) {
-        tree.accept(VISITOR);
+        tree.accept(visitor);
     }
 
     private class StringConcatenationVisitor extends BaseTreeVisitor {
@@ -75,10 +75,10 @@ public class AvoidConcatenateStringsInLoop extends IssuableSubscriptionVisitor {
                 super.visitAssignmentExpression(tree);
             }
         }
-    }
 
-    private boolean isStringType(ExpressionTree expressionTree) {
-        return expressionTree.symbolType().is(STRING_CLASS);
+        private boolean isStringType(ExpressionTree expressionTree) {
+            return expressionTree.symbolType().is(STRING_CLASS);
+        }
     }
 
 }
