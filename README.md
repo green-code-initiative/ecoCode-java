@@ -1,4 +1,4 @@
-EcoCode-php
+EcoCode-java
 ===========
 
 _ecoCode_ is a collective project aiming to reduce environmental footprint of software at the code level. The goal of
@@ -8,7 +8,7 @@ ecological impact: energy and resources over-consumption, "fatware", shortening 
 _ecoCode_ is based on evolving catalogs
 of [good practices](https://github.com/green-code-initiative/ecoCode/blob/main/docs/rules), for various technologies.
 This
-SonarQube plugin then implements these catalogs as rules for scanning your PHP projects.
+SonarQube plugin then implements these catalogs as rules for scanning your Java projects.
 
 > ⚠️ This is still a very early stage project. Any feedback or contribution will be highly appreciated. Please
 > refer to the contribution section.
@@ -31,7 +31,7 @@ check [ecoCode repository](https://github.com/green-code-initiative/ecoCode#-get
 🛒 Distribution
 ------------------
 
-Ready to use binaries are available [from GitHub](https://github.com/green-code-initiative/ecoCode-php/releases).
+Ready to use binaries are available [from GitHub](https://github.com/green-code-initiative/ecoCode-java/releases).
 
 🧩 Compatibility
 -----------------

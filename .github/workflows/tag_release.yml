@@ -52,7 +52,7 @@ jobs:
         run: echo "upload_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
   upload:
-    name: Upload PHP Plugin
+    name: Upload Java Plugin
     runs-on: ubuntu-latest
     needs: build
     steps:

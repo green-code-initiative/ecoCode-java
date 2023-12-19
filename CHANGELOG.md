@@ -15,5 +15,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deleted
 
-[unreleased]: https://github.com/green-code-initiative/ecoCode-php/compare/v1.5.0...HEAD
-[1.4.0]: https://github.com/green-code-initiative/ecoCode-php/compare/v0.0.0...1.5.0
+[unreleased]: https://github.com/green-code-initiative/ecoCode-java/compare/v1.5.0...HEAD
+[1.4.0]: https://github.com/green-code-initiative/ecoCode-java/compare/v0.0.0...1.5.0

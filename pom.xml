@@ -59,7 +59,6 @@
         <sonar-analyzer-commons.version>2.5.0.1358</sonar-analyzer-commons.version>
 
         <sonar-packaging.version>1.23.0.740</sonar-packaging.version>
-        <sonar.skipDependenciesPackaging>true</sonar.skipDependenciesPackaging>
 
         <junit.jupiter.version>5.9.1</junit.jupiter.version>
         <assertJ.version>3.23.1</assertJ.version>
@@ -164,7 +163,7 @@
                     </execution>
                     <execution>
                         <id>report</id>
-                        <!-- <phase>test</phase> -->
+<!--                        <phase>test</phase>-->
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -181,6 +180,7 @@
                     <pluginClass>fr.greencodeinitiative.java.JavaPlugin</pluginClass>
                     <sonarLintSupported>true</sonarLintSupported>
                     <pluginApiMinVersion>${sonarqube.version}</pluginApiMinVersion>
+                    <skipDependenciesPackaging>true</skipDependenciesPackaging>
                     <jreMinVersion>${java.version}</jreMinVersion>
                     <archive>
                         <manifestEntries>
@@ -241,7 +241,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.6.0</version>
@@ -326,7 +326,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> -->
+            </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
