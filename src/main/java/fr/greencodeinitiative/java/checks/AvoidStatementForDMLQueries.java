@@ -39,7 +39,7 @@ public class AvoidStatementForDMLQueries extends IssuableSubscriptionVisitor {
 
     private static final Pattern PATTERN = Pattern.compile("(SELECT|INSERT INTO|UPDATE|DELETE FROM)\\s?.*", Pattern.CASE_INSENSITIVE);
 
-    private final MethodMatchers EXECUTE_METHOD = MethodMatchers.or(
+    private static final MethodMatchers EXECUTE_METHOD = MethodMatchers.or(
             MethodMatchers.create().ofSubTypes("java.sql.Statement").names("executeUpdate")
                     .withAnyParameters().build());
 
@@ -54,7 +54,7 @@ public class AvoidStatementForDMLQueries extends IssuableSubscriptionVisitor {
         if (!EXECUTE_METHOD.matches(methodInvocationTree))
             return;
         Arguments arguments = methodInvocationTree.arguments();
-        if (arguments.size() < 1)
+        if (arguments.isEmpty())
             return;
         ExpressionTree first = arguments.get(0);
         if (first.is(Tree.Kind.STRING_LITERAL)) {

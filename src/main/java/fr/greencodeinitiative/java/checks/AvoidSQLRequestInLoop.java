@@ -39,7 +39,7 @@ public class AvoidSQLRequestInLoop extends IssuableSubscriptionVisitor {
     private static final String JAVA_SQL_CONNECTION = "java.sql.Connection";
     private static final String SPRING_JDBC_OPERATIONS = "org.springframework.jdbc.core.JdbcOperations";
 
-    private final MethodMatchers SQL_METHOD = MethodMatchers.or(
+    private static final MethodMatchers SQL_METHOD = MethodMatchers.or(
             MethodMatchers.create().ofSubTypes("org.hibernate.Session").names("createQuery", "createSQLQuery")
                     .withAnyParameters().build(),
             MethodMatchers.create().ofSubTypes(JAVA_SQL_STATEMENT)

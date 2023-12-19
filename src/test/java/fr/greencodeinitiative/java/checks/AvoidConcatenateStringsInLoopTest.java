@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.sonar.java.checks.verifier.CheckVerifier;
 
 @Deprecated
-public class AvoidConcatenateStringsInLoopTest {
+class AvoidConcatenateStringsInLoopTest {
 
     @Test
     void checkNonCompliantTests() {
