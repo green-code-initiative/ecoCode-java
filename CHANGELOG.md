@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update ecocode-rules-specifications to 1.4.4
+
 ### Deleted
 
 [unreleased]: https://github.com/green-code-initiative/ecoCode-java/compare/v1.5.0...HEAD
