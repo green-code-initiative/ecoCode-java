@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Java rules moved from `ecoCode` repository to current repository
+- Add 10.3 SonarQube compatibility
 
 ### Changed
 
