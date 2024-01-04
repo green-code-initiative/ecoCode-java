@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update ecocode-rules-specifications to 1.4.4
+- Update ecocode-rules-specifications to 1.4.6
 
 ### Deleted
 

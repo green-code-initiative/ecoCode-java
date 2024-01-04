@@ -67,7 +67,7 @@
         <google.re2j>1.7</google.re2j>
 
         <!-- temporary version waiting for real automatic release in ecocode repository -->
-        <ecocode-rules-specifications.version>1.4.4</ecocode-rules-specifications.version>
+        <ecocode-rules-specifications.version>1.4.6</ecocode-rules-specifications.version>
 
     </properties>
 
@@ -163,7 +163,6 @@
                     </execution>
                     <execution>
                         <id>report</id>
-<!--                        <phase>test</phase>-->
                         <goals>
                             <goal>report</goal>
                         </goals>
@@ -224,10 +223,15 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
-                                    <artifact>org.*:*</artifact>
+                                    <artifact>org.sonarsource.analyzer-commons:sonar-analyzer-commons:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
-                                        <exclude>javax/annotation/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.google.re2j:re2j:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -246,25 +250,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
-                    <execution>
-                        <id>copy-bundle</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>../lib</outputDirectory>
-                        </configuration>
-                    </execution>
+                    <!-- only for unit tests ("test-jars" directory used in classpath) -->
                     <execution>
                         <id>copy</id>
                         <phase>test-compile</phase>
