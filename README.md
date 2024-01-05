@@ -26,7 +26,33 @@ the [ecoCode repository](https://github.com/green-code-initiative/ecoCode#-sonar
 🚀 Getting Started
 ------------------
 
-check [ecoCode repository](https://github.com/green-code-initiative/ecoCode#-getting-started)
+You can give a try with a one command docker :
+
+```sh
+docker run -ti --rm \
+       -p 9000:9000 \
+       --name sonarqube-ecocode-java ghcr.io/green-code-initiative/sonarqube-ecocode-java:latest
+```
+
+or (with logs and data locally stored) :
+
+```sh
+docker run -ti --rm \
+       -v sq_ecocode_logs:/opt/sonarqube/logs \
+       -v sq_ecocode_data:/opt/sonarqube/data \
+       -p 9000:9000 \
+       --name sonarqube-ecocode-java ghcr.io/green-code-initiative/sonarqube-ecocode-java:latest
+```
+
+... and configure local SonarQube (security config and quality profile : see [configuration](https://github.com/green-code-initiative/ecoCode-common/blob/main/doc/INSTALL.md#configuration-sonarqube) for more details).
+
+To install other `ecocode` plugins, you can also :
+- download each plugin separatly and copy the plugin (jar file) to `$SONAR_INSTALL_DIR/extensions/plugins` and restart SonarQube.
+- install different ecocode plugins with Marketplace (inside admin panel of SonarQube)
+
+Then you can use Java test project repository to test the environment : see README.md of [Java test project](https://github.com/green-code-initiative/ecoCode-java-test-project)
+
+Finally, you can directly use a [all-in-one docker-compose](https://github.com/green-code-initiative/ecoCode-common/blob/main/doc/INSTALL.md#start-sonarqube-if-first-time)
 
 🛒 Distribution
 ------------------
