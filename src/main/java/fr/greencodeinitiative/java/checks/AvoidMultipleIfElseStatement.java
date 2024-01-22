@@ -65,7 +65,7 @@ public class AvoidMultipleIfElseStatement extends IssuableSubscriptionVisitor {
     public void visitNode(@SuppressWarnings("NullableProblems") Tree pTree) {
 
         MethodTree method = (MethodTree)pTree;
-        if (method.block() == null) // in an interface, there are some methods without block
+        if (method.block() == null) // in an interface, there are some methods without block : thus, is to avoid NPE
             return;
 
         // reinit data structure before each method analysis
