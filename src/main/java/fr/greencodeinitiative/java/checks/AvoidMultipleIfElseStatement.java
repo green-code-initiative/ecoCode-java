@@ -65,6 +65,8 @@ public class AvoidMultipleIfElseStatement extends IssuableSubscriptionVisitor {
     public void visitNode(@SuppressWarnings("NullableProblems") Tree pTree) {
 
         MethodTree method = (MethodTree)pTree;
+        if (method.block() == null)
+            return;
 
         // reinit data structure before each method analysis
         variablesStruct = new VariablesPerLevelDataStructure();

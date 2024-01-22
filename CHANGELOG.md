@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#7](https://github.com/green-code-initiative/ecoCode-java/issues/7) EC2 rule : correction NullPointer with interface
+
 ### Deleted
 
 ## [1.5.0] - 2024-01-06
