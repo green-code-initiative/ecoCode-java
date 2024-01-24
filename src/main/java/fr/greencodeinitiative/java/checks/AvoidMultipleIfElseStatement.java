@@ -114,6 +114,10 @@ public class AvoidMultipleIfElseStatement extends IssuableSubscriptionVisitor {
         // analyze condition variables and raise error if needed
         computeIfVariables(pIfTree, pLevel);
 
+        // return if there is no block
+        if (!pIfTree.thenStatement().is(Kind.BLOCK))
+            return;
+
         // visit the content of if block
         visitNodeContent(((BlockTree)pIfTree.thenStatement()).body(), pLevel + 1);
 
