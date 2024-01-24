@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [#9](https://github.com/green-code-initiative/ecoCode-java/issues/9) EC2 rule : correction no block statement use case
+
 ### Deleted
 
 ## [1.5.1] - 2024-01-23
