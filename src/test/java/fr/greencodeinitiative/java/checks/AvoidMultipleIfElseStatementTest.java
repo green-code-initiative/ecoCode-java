@@ -28,11 +28,23 @@ class AvoidMultipleIfElseStatementTest {
                 .withCheck(new AvoidMultipleIfElseStatement())
                 .verifyIssues();
         CheckVerifier.newVerifier()
+                .onFile("src/test/files/AvoidMultipleIfElseStatementNoIssue.java")
+                .withCheck(new AvoidMultipleIfElseStatement())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void testInterfaceMethodStatement() {
+        CheckVerifier.newVerifier()
                 .onFile("src/test/files/AvoidMultipleIfElseStatementInterface.java")
                 .withCheck(new AvoidMultipleIfElseStatement())
                 .verifyNoIssues();
+    }
+
+    @Test
+    void testNotBlockStatement() {
         CheckVerifier.newVerifier()
-                .onFile("src/test/files/AvoidMultipleIfElseStatementNoIssue.java")
+                .onFile("src/test/files/AvoidMultipleIfElseStatementNotBlock.java")
                 .withCheck(new AvoidMultipleIfElseStatement())
                 .verifyNoIssues();
     }
