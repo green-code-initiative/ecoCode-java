@@ -4,7 +4,7 @@
 
     <groupId>io.ecocode</groupId>
     <artifactId>ecocode-java-plugin</artifactId>
-    <version>1.5.2-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
     
     <packaging>sonar-plugin</packaging>
 
@@ -67,7 +67,11 @@
         <google.re2j>1.7</google.re2j>
 
         <!-- temporary version waiting for real automatic release in ecocode repository -->
+<<<<<<< HEAD
         <ecocode-rules-specifications.version>1.5.0</ecocode-rules-specifications.version>
+=======
+        <ecocode-rules-specifications.version>1.6.0-SNAPSHOT</ecocode-rules-specifications.version>
+>>>>>>> 603fbcd (fix: :memo: Version et changes correction)
 
     </properties>
 
