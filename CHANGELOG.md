@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deleted
 
-- Deprecated java rules EC4, EC53, EC63 and EC75
+- [#6](https://github.com/green-code-initiative/ecoCode-java/pull/6) Delete deprecated java rules EC4, EC53, EC63 and EC75
 
 ## [1.5.2] - 2024-01-23
 
