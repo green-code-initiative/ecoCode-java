@@ -9,11 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#12](https://github.com/green-code-initiative/ecoCode-java/issues/12) Add support for SonarQube 10.4 "DownloadOnlyWhenRequired" feature
+
 ### Changed
 
 ### Deleted
 
 - Deprecated java rules EC4, EC53, EC63 and EC75
+
+## [1.5.2] - 2024-01-23
+
+### Changed
+
+- [#9](https://github.com/green-code-initiative/ecoCode-java/issues/9) EC2 rule : correction no block statement use case
+
+## [1.5.1] - 2024-01-23
+
+### Changed
+
+- [#7](https://github.com/green-code-initiative/ecoCode-java/issues/7) EC2 rule : correction NullPointer with interface
 
 ## [1.5.0] - 2024-01-06
 
@@ -26,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update ecocode-rules-specifications to 1.4.6
 
-[unreleased](https://github.com/green-code-initiative/ecoCode-java/compare/v1.5.1...HEAD)
-[1.5.1](https://github.com/green-code-initiative/ecoCode-java/compare/v1.5.0...1.5.1)
+[unreleased](https://github.com/green-code-initiative/ecoCode-java/compare/1.5.2...HEAD)
+[1.5.2](https://github.com/green-code-initiative/ecoCode-java/compare/1.5.1...1.5.2)
+[1.5.1](https://github.com/green-code-initiative/ecoCode-java/compare/1.5.0...1.5.1)
 [1.5.0](https://github.com/green-code-initiative/ecoCode-java/releases/tag/1.5.0)
