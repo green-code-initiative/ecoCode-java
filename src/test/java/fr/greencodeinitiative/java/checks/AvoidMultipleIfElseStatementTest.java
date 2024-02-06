@@ -49,5 +49,13 @@ class AvoidMultipleIfElseStatementTest {
                 .verifyNoIssues();
     }
 
+    @Test
+    void testCompareMethod() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/AvoidMultipleIfElseStatementCompareMethod.java")
+                .withCheck(new AvoidMultipleIfElseStatement())
+                .verifyNoIssues();
+    }
+
 
 }
