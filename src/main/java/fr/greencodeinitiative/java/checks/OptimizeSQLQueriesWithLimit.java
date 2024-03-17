@@ -12,7 +12,7 @@ import static java.util.Collections.singletonList;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 
-@Rule(key = "EC80")
+@Rule(key = "EC24")
 public class OptimizeSQLQueriesWithLimit extends IssuableSubscriptionVisitor {
 
     public static final String MESSAGE_RULE = "Optimize Database SQL Queries (Clause LIMIT)";
