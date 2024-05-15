@@ -11,10 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+### Deleted
+
+## [1.6.1] - 2024-05-15
+
+### Changed
+
 - [#15](https://github.com/green-code-initiative/ecoCode-java/issues/15) correction NullPointer in EC2 rule
 - check Sonarqube 10.5.1 compatibility + update docker files and README.md
-
-### Deleted
 
 ## [1.6.0] - 2024-02-02
 
@@ -49,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update ecocode-rules-specifications to 1.4.6
 
-[unreleased](https://github.com/green-code-initiative/ecoCode-java/compare/1.6.0...HEAD)
+[unreleased](https://github.com/green-code-initiative/ecoCode-java/compare/1.6.1...HEAD)
+[1.6.1](https://github.com/green-code-initiative/ecoCode-java/compare/1.6.0...1.6.1)
 [1.6.0](https://github.com/green-code-initiative/ecoCode-java/compare/1.5.2...1.6.0)
 [1.5.2](https://github.com/green-code-initiative/ecoCode-java/compare/1.5.1...1.5.2)
 [1.5.1](https://github.com/green-code-initiative/ecoCode-java/compare/1.5.0...1.5.1)
