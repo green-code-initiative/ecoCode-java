@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [#15](https://github.com/green-code-initiative/ecoCode-java/issues/15) correction NullPointer in EC2 rule
+- check Sonarqube 10.5.1 compatibility + update docker files and README.md
 
 ### Deleted
 
