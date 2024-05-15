@@ -29,14 +29,12 @@ import org.sonar.api.server.rule.RulesDefinition.Rule;
 import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 class JavaRulesDefinitionTest {
 
     private RulesDefinition.Repository repository;
-    private RulesDefinition.Context context;
 
     private int rulesSize;
 
