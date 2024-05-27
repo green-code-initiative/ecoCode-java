@@ -4,7 +4,7 @@
 
     <groupId>io.ecocode</groupId>
     <artifactId>ecocode-java-plugin</artifactId>
-    <version>1.6.2</version>
+    <version>1.6.3-SNAPSHOT</version>
     
     <packaging>sonar-plugin</packaging>
 
@@ -30,7 +30,7 @@
         <connection>scm:git:https://github.com/green-code-initiative/ecocode-java</connection>
         <developerConnection>scm:git:https://github.com/green-code-initiative/ecocode-java</developerConnection>
         <url>https://github.com/green-code-initiative/ecocode-java</url>
-        <tag>1.6.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
