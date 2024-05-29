@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deleted
 
+
+## [1.6.2] - 2024-05-30
+
+### Added
+
+- EC82 rule : A variable is never reassigned and can be made constant
+
 ## [1.6.1] - 2024-05-15
 
 ### Changed
