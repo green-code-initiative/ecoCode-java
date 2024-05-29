@@ -18,6 +18,8 @@
 package fr.greencodeinitiative.java.checks;
 
 import org.sonar.check.Rule;
+import org.sonar.java.model.expression.AssignmentExpressionTreeImpl;
+import org.sonar.java.model.expression.MemberSelectExpressionTreeImpl;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.tree.LiteralTree;
 import org.sonar.plugins.java.api.tree.Tree;
@@ -35,16 +37,17 @@ public class AvoidEagerFetchCheck extends IssuableSubscriptionVisitor {
 
     protected static final String MESSAGERULE = "Privilege the use of Lazy Fetch";
     private static final Predicate<String> EAGER_FETCH =
-            compile("FetchType.EAGER", CASE_INSENSITIVE).asPredicate(); //simple regexp, more precision
+            compile("EAGER", CASE_INSENSITIVE).asPredicate(); //simple regexp, more precision
 
     @Override
     public List<Kind> nodesToVisit() {
-        return singletonList(Kind.ANNOTATION);
+        return singletonList(Kind.ASSIGNMENT);
     }
 
     @Override
     public void visitNode(Tree tree) {
-        String value = ((LiteralTree) tree).value();
+        Tree treeFirstLevel = ((AssignmentExpressionTreeImpl) tree).getChildren().get(2);
+        String value = ((MemberSelectExpressionTreeImpl) treeFirstLevel).identifier().toString();
         if (EAGER_FETCH.test(value)) {
             reportIssue(tree, MESSAGERULE);
         }
