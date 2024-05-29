@@ -15,27 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.greencodeinitiative.java.checks;
-
-import org.junit.jupiter.api.Test;
-import org.sonar.java.checks.verifier.CheckVerifier;
-
-class IncrementCheckTest {
-
-    @Test
-    void test() {
-        CheckVerifier.newVerifier()
-                .onFile("src/test/files/IncrementCheck.java")
-                .withCheck(new IncrementCheck())
-                .verifyIssues();
+class MyClass2 {
+    MyClass(MyClass mc) {
     }
-
-    @Test
-    void incrementCheck_unaryExpressionWithinBinaryExpression_noIssue() {
-        CheckVerifier.newVerifier()
-                .onFile("src/test/files/IncrementCheckBinaryExpression.java")
-                .withCheck(new IncrementCheck())
-                .verifyNoIssues();
+    void unaryExpressionWithinBinaryExpression() {
+        var i = 0;
+        for (int j=0; j < 10; ++j) {
+            System.out.println("test" + i++);
+            System.out.println(2 + i++);
+            System.out.println(2 - i++);
+            System.out.println(2 * i++);
+            System.out.println(2 / i++);
+        }
     }
-
 }
