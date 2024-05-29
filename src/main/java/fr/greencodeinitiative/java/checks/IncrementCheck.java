@@ -39,6 +39,8 @@ public class IncrementCheck extends IssuableSubscriptionVisitor {
 
     @Override
     public void visitNode(Tree tree) {
-        reportIssue(tree, MESSAGERULE);
+        if (tree.parent().is(Kind.EXPRESSION_STATEMENT)) {
+            reportIssue(tree, MESSAGERULE);
+        }   
     }
 }
