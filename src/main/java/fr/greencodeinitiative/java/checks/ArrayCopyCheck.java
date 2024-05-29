@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-class TestClass {
+class ArrayCopyCheck {
 
     public void copyArrayOK() {
         final int len = 5;

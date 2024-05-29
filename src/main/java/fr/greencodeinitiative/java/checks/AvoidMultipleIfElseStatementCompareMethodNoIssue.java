@@ -1,6 +1,6 @@
 package fr.greencodeinitiative.java.checks;
 
-class AvoidMultipleIfElseStatementCheck {
+class AvoidMultipleIfElseStatementCompareMethodNoIssue {
 
     public int compare(FieldVo o1, FieldVo o2) {
 
@@ -32,6 +32,39 @@ class AvoidMultipleIfElseStatementCheck {
         }
         // If both block don't start with BQRY, sort alpha with String.compareTo method
         return o1.getIdBlock().compareTo(o2.getIdBlock());
+    }
+
+    public static class FieldVo {
+
+        private String idBlock;
+
+        private String idField;
+
+        private boolean original;
+
+        private long columnPos;
+
+        private long index;
+
+        public String getIdBlock() {
+            return idBlock;
+        }
+
+        public String getIdField() {
+            return idField;
+        }
+
+        public boolean isOriginal() {
+            return original;
+        }
+
+        public long getColumnPos() {
+            return columnPos;
+        }
+
+        public long getIndex() {
+            return index;
+        }
     }
 
 }

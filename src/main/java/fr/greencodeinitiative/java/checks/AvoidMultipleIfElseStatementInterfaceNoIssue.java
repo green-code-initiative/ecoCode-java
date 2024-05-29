@@ -17,8 +17,8 @@
  */
 package fr.greencodeinitiative.java.checks;
 
-interface AvoidMultipleIfElseStatementCheck {
+interface AvoidMultipleIfElseStatementInterfaceNoIssue {
 
-    TransactionMetaData initMetaData(ITransactionFoundation transactionFoundation) throws ProgramException, MnemonicTemplateShellException;
+    Object initMetaData(Object transactionFoundation) throws IllegalAccessException;
 
 }

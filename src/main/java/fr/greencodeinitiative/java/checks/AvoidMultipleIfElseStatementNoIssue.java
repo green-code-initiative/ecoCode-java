@@ -1,6 +1,6 @@
 package fr.greencodeinitiative.java.checks;
 
-class AvoidMultipleIfElseStatementCheckNoIssue {
+class AvoidMultipleIfElseStatementNoIssue {
 
     // inital RULES : please see HTML description file of this rule (resources directory)
 

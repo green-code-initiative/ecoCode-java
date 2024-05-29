@@ -10,9 +10,11 @@
     <name>ecoCode Java Sonar Plugin Test Project</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <sonar.java.binaries>target</sonar.java.binaries>
 
         <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
@@ -23,7 +25,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>2.7.8</version>
+            <version>3.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

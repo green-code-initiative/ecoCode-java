@@ -17,11 +17,12 @@
  */
 package fr.greencodeinitiative.java.checks;
 
-class AvoidMultipleIfElseStatementNotBlock {
+class AvoidMultipleIfElseStatementNoBlockNoIssue {
 
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
+        return false;
     }
 
 }
