@@ -30,6 +30,7 @@ import fr.greencodeinitiative.java.checks.AvoidSetConstantInBatchUpdate;
 import fr.greencodeinitiative.java.checks.AvoidSpringRepositoryCallInLoopOrStreamCheck;
 import fr.greencodeinitiative.java.checks.AvoidStatementForDMLQueries;
 import fr.greencodeinitiative.java.checks.AvoidUsageOfStaticCollections;
+import fr.greencodeinitiative.java.checks.DetectUnoptimizedImageFormat;
 import fr.greencodeinitiative.java.checks.FreeResourcesOfAutoCloseableInterface;
 import fr.greencodeinitiative.java.checks.IncrementCheck;
 import fr.greencodeinitiative.java.checks.InitializeBufferWithAppropriateSize;
@@ -61,6 +62,7 @@ public class JavaCheckRegistrar implements CheckRegistrar {
             OptimizeReadFileExceptions.class,
             InitializeBufferWithAppropriateSize.class,
             AvoidSetConstantInBatchUpdate.class,
+            DetectUnoptimizedImageFormat.class,
             FreeResourcesOfAutoCloseableInterface.class,
             AvoidMultipleIfElseStatement.class
     );
