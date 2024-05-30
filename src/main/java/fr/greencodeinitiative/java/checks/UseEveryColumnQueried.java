@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.semantic.MethodMatchers;
+import org.sonar.plugins.java.api.semantic.Symbol;
+import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
 import org.sonar.plugins.java.api.semantic.Symbol.VariableSymbol;
 import org.sonar.plugins.java.api.tree.Arguments;
 import org.sonar.plugins.java.api.tree.AssignmentExpressionTree;
@@ -140,9 +142,30 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         List<String> usedColumns = new ArrayList<>();
         List<IdentifierTree> resultSetUsages = resultSet.usages();
         for(IdentifierTree usage : resultSetUsages) {
+            Tree parent = usage.parent();
+            if(!parent.is(Tree.Kind.MEMBER_SELECT)){
+                continue;
+            }
+            MemberSelectExpressionTree memberSelect = (MemberSelectExpressionTree) parent;
+            IdentifierTree identifier = memberSelect.identifier();
+            if(!identifier.is(Tree.Kind.METHOD_INVOCATION)){
+                continue;
+            }
+            MethodInvocationTree methodInvocation = (MethodInvocationTree) identifier;
+            if(!SQL_RESULTSET_GET.matches(methodInvocation)) {
+                continue;
+            }
+            String column = methodInvocation.arguments().get(0).toString();
+            usedColumns.add(column);
         }
 
         // STEP 4 : compare selected and used columns, report issues
+
+        selectedColumns.removeAll(usedColumns);
+        if(!selectedColumns.isEmpty()) {
+            reportIssue(methodInvocationTree, MESSAGERULE);
+        }
+
     }
 
     List<String> extractSelectedSQLColumns(String query){
