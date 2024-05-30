@@ -17,17 +17,16 @@
  */
 package fr.greencodeinitiative.java.checks;
 
-import org.junit.jupiter.api.Test;
-import org.sonar.java.checks.verifier.CheckVerifier;
+import java.util.regex.Pattern;
 
-class AvoidEagerFetchCheckTest {
+class AvoidEagerFetchCheckWithManyAnnotations {
+    AvoidEagerFetchCheckWithManyAnnotations(AvoidEagerFetchCheckWithManyAnnotations mc) {
+    }
 
-    @Test
-    void test() {
-        CheckVerifier.newVerifier()
-                .onFile("src/test/files/AvoidEagerFetchCheckWithManyAnnotations.java")
-                .withCheck(new AvoidEagerFetchCheck())
-                .verifyIssues();
+    public void UserEntity() {
+
+        @ManyToOne(mappedBy = test, fetch = FetchType.LAZY)
+        String commandReference;
     }
 
 }

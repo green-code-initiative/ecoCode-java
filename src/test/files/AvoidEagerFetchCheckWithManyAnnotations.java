@@ -19,13 +19,14 @@ package fr.greencodeinitiative.java.checks;
 
 import java.util.regex.Pattern;
 
-class AvoidEagerFetchCheck {
-    AvoidEagerFetchCheck(AvoidEagerFetchCheck mc) {
+class AvoidEagerFetchCheckWithManyAnnotations {
+    AvoidEagerFetchCheckWithManyAnnotations(AvoidEagerFetchCheckWithManyAnnotations mc) {
     }
 
     public void UserEntity() {
-        @ManyToOne(fetch = FetchType.LAZY) // Noncompliant {{Privilege the use of Lazy Fetch}}
-        String requestNonCompiliant;
+
+        @ManyToOne(mappedBy = test, fetch = FetchType.EAGER) // Noncompliant {{Privilege the use of Lazy Fetch}}
+        String commandReference;
     }
 
 }

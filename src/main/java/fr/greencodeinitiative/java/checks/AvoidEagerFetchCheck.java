@@ -32,10 +32,12 @@ import static java.util.Collections.singletonList;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 
-@Rule(key = "GRC2")
+@Rule(key = "EC1111")
 public class AvoidEagerFetchCheck extends IssuableSubscriptionVisitor {
 
     protected static final String MESSAGERULE = "Privilege the use of Lazy Fetch";
+
+    protected static final int FETCH_TYPE = 2;
     private static final Predicate<String> EAGER_FETCH =
             compile("EAGER", CASE_INSENSITIVE).asPredicate(); //simple regexp, more precision
 
@@ -46,10 +48,12 @@ public class AvoidEagerFetchCheck extends IssuableSubscriptionVisitor {
 
     @Override
     public void visitNode(Tree tree) {
-        Tree treeFirstLevel = ((AssignmentExpressionTreeImpl) tree).getChildren().get(2);
-        String value = ((MemberSelectExpressionTreeImpl) treeFirstLevel).identifier().toString();
-        if (EAGER_FETCH.test(value)) {
-            reportIssue(tree, MESSAGERULE);
+        Tree treeFirstLevel = ((AssignmentExpressionTreeImpl) tree).getChildren().get(FETCH_TYPE);
+        if (treeFirstLevel instanceof MemberSelectExpressionTreeImpl) {
+            String value = ((MemberSelectExpressionTreeImpl) treeFirstLevel).identifier().toString();
+            if (EAGER_FETCH.test(value)) {
+                reportIssue(tree, MESSAGERULE);
+            }
         }
     }
 }

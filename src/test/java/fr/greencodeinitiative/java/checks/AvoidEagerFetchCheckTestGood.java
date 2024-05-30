@@ -16,18 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.greencodeinitiative.java.checks;
-
 import org.junit.jupiter.api.Test;
 import org.sonar.java.checks.verifier.CheckVerifier;
 
-class AvoidEagerFetchCheckTest {
+class AvoidEagerFetchCheckTestGood {
 
     @Test
     void test() {
         CheckVerifier.newVerifier()
-                .onFile("src/test/files/AvoidEagerFetchCheckWithManyAnnotations.java")
+                .onFile("src/test/files/AvoidEagerFetchCheckWithNoEager.java")
                 .withCheck(new AvoidEagerFetchCheck())
-                .verifyIssues();
+                .verifyNoIssues();
     }
 
 }
