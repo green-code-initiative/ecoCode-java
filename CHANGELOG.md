@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add new rule EC1245 - Make non reassigned variables constants
+- Add new rule EC205 - Force Lazy fetch types for JPA associations
 - Add new rule EC1245 - Avoid energy consuming methods
 
 ### Changed
