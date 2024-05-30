@@ -23,29 +23,99 @@ import org.sonar.java.checks.verifier.CheckVerifier;
 class UseEveryColumnQueriedTest {
 
     @Test
-    void testHasIssues() {
+    void testHasIssues1() {
         CheckVerifier.newVerifier()
-                .onFiles("src/test/files/UseEveryColumnQueriedNonCompliant1.java",
-                "src/test/files/UseEveryColumnQueriedNonCompliant2.java",
-                "src/test/files/UseEveryColumnQueriedNonCompliant3.java",
-                "src/test/files/UseEveryColumnQueriedNonCompliant4.java",
-                "src/test/files/UseEveryColumnQueriedNonCompliant5.java",
-                "src/test/files/UseEveryColumnQueriedNonCompliant6.java")
+                .onFile("src/test/files/UseEveryColumnQueriedNonCompliant1.java")
                 .withCheck(new UseEveryColumnQueried())
                 .verifyIssues();
     }
 
     @Test
-    void testHasNoIssues() {
+    void testHasIssues2() {
         CheckVerifier.newVerifier()
-                .onFiles(
-                        "src/test/files/UseEveryColumnQueriedCompliant1.java",
-                        "src/test/files/UseEveryColumnQueriedCompliant2.java",
-                        "src/test/files/UseEveryColumnQueriedCompliant3.java",
-                        "src/test/files/UseEveryColumnQueriedCompliant4.java",
-                        "src/test/files/UseEveryColumnQueriedCompliant5.java",
-                        "src/test/files/UseEveryColumnQueriedCompliant6.java"
-                )
+                .onFile("src/test/files/UseEveryColumnQueriedNonCompliant2.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyIssues();
+    }
+
+    @Test
+    void testHasIssues3() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedNonCompliant3.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyIssues();
+    }
+
+    @Test
+    void testHasIssues4() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedNonCompliant4.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyIssues();
+    }
+
+    @Test
+    void testHasIssues5() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedNonCompliant5.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyIssues();
+    }
+
+    @Test
+    void testHasIssues6() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedNonCompliant6.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyIssues();
+    }
+
+
+
+    @Test
+    void testHasNoIssues1() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedCompliant1.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void testHasNoIssues2() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedCompliant2.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void testHasNoIssues3() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedCompliant3.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void testHasNoIssues4() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedCompliant4.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void testHasNoIssues5() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedCompliant5.java")
+                .withCheck(new UseEveryColumnQueried())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void testHasNoIssues6() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/UseEveryColumnQueriedCompliant6.java")
                 .withCheck(new UseEveryColumnQueried())
                 .verifyNoIssues();
     }
