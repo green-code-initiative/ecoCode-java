@@ -15,25 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.greencodeinitiative.java;
+package fr.greencodeinitiative.java.checks;
 
-import org.junit.jupiter.api.Test;
-import org.sonar.plugins.java.api.CheckRegistrar;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class CheckSvg3 {
 
-class JavaCheckRegistrarTest {
+    CheckSvg3(){}
 
-    @Test
-    void checkNumberRules() {
-        final CheckRegistrar.RegistrarContext context = new CheckRegistrar.RegistrarContext();
+    public void loadImage() {
 
-        final JavaCheckRegistrar registrar = new JavaCheckRegistrar();
-        registrar.register(context);
+        String imagePathj = "src/test/assets/svg.svg"; // Noncompliant {{Consider using SVG format over other image formats for small images.}}
 
-        assertThat(context.checkClasses()).hasSize(16);
-        assertThat(context.testCheckClasses()).isEmpty();
-
+        try {
+            File image = new File(imagePathj);
+        } catch (Exeception e){
+            System.err.out(e);
+        }
     }
-
-}
+    }
