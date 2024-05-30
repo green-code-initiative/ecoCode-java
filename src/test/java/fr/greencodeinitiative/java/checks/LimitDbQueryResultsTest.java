@@ -15,25 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.greencodeinitiative.java;
+package fr.greencodeinitiative.java.checks;
 
 import org.junit.jupiter.api.Test;
-import org.sonar.plugins.java.api.CheckRegistrar;
+import org.sonar.java.checks.verifier.CheckVerifier;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-class JavaCheckRegistrarTest {
+class LimitDbQueryResultsTest {
 
     @Test
-    void checkNumberRules() {
-        final CheckRegistrar.RegistrarContext context = new CheckRegistrar.RegistrarContext();
-
-        final JavaCheckRegistrar registrar = new JavaCheckRegistrar();
-        registrar.register(context);
-
-        assertThat(context.checkClasses()).hasSize(16);
-        assertThat(context.testCheckClasses()).isEmpty();
-
+    void test() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/LimitDbQueryResults.java")
+                .withCheck(new LimitDbQueryResults())
+                .verifyIssues();
     }
 
 }
