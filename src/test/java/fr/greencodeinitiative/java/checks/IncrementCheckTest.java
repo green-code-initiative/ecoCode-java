@@ -38,4 +38,11 @@ class IncrementCheckTest {
                 .verifyNoIssues();
     }
 
+    @Test
+    void incrementCheck_unaryExpressionWithinMethod_noIssue() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/IncrementCheckMethod.java")
+                .withCheck(new IncrementCheck())
+                .verifyNoIssues();
+    }
 }

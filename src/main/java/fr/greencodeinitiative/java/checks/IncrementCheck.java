@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.sonar.check.Rule;
+import org.sonar.java.ast.parser.ArgumentListTreeImpl;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.tree.BinaryExpressionTree;
 import org.sonar.plugins.java.api.tree.Tree;
@@ -43,7 +44,8 @@ public class IncrementCheck extends IssuableSubscriptionVisitor {
     public void visitNode(Tree tree) {
         var unaryExpressionTree = (UnaryExpressionTree) tree;
 
-        if (unaryExpressionTree.parent() instanceof BinaryExpressionTree) {
+        if (unaryExpressionTree.parent() instanceof BinaryExpressionTree
+                || unaryExpressionTree.parent() instanceof ArgumentListTreeImpl) {
             return;
         }
         reportIssue(tree, MESSAGERULE);
