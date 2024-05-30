@@ -17,10 +17,25 @@
  */
 package fr.greencodeinitiative.java.checks;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.sonar.java.checks.verifier.CheckVerifier;
 
 class UseEveryColumnQueriedTest {
+
+    @Test
+    void testExtractSelectedSQLColumns(){
+        String query = "\"SELECT id AS registration_id,\tfirst, last as Final, AGE FROM Registration\"";
+        List<String> columns = UseEveryColumnQueried.extractSelectedSQLColumns(query);
+        assertEquals(4, columns.size());
+        assertEquals("REGISTRATION_ID", columns.get(0));
+        assertEquals("FIRST", columns.get(1));
+        assertEquals("FINAL", columns.get(2));
+        assertEquals("AGE", columns.get(3));
+    }
 
     @Test
     void testHasIssues1() {

@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.jdt.internal.core.Member;
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.semantic.MethodMatchers;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
 import org.sonar.plugins.java.api.semantic.Symbol.VariableSymbol;
+import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.Arguments;
 import org.sonar.plugins.java.api.tree.AssignmentExpressionTree;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
@@ -82,7 +84,18 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         if(!SQL_STATEMENT_DECLARE_SQL.matches(methodInvocationTree)) {
             return;
         }
-        VariableSymbol statement = (VariableSymbol) methodInvocationTree.methodSymbol().owner();
+        ExpressionTree et = methodInvocationTree.methodSelect();
+        if(!et.is(Tree.Kind.MEMBER_SELECT)) {
+            return;
+        }
+        MemberSelectExpressionTree mset = (MemberSelectExpressionTree) et;
+        ExpressionTree expression = mset.expression();
+        if(!expression.is(Tree.Kind.IDENTIFIER)) {
+            return;
+        }
+        IdentifierTree id = (IdentifierTree) expression;
+        Symbol statement = id.symbol();
+        //Symbol statement = methodInvocationTree.methodSymbol().owner();
         if(statement == null) {
             return;
         }
@@ -103,7 +116,7 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         // STEP 2 : retrieve the resultSet object
 
         List<IdentifierTree> usages = statement.usages();
-        VariableSymbol resultSet = null;
+        Symbol resultSet = null;
         for(IdentifierTree usage : usages) {
             Tree parent = usage.parent();
             if(!parent.is(Tree.Kind.MEMBER_SELECT)){
@@ -119,17 +132,8 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
                 continue;
             }
 
-            while(!parent.is(Tree.Kind.ASSIGNMENT)){
-                parent = parent.parent();
-                if(parent == null){
-                    continue;
-                }
-            }
-            ExpressionTree variable = ((AssignmentExpressionTree)parent).variable();
-            if(!variable.is(Tree.Kind.VARIABLE)){
-                continue;
-            }
-            resultSet = ((VariableSymbol)((VariableTree)variable).symbol());
+            VariableTree resultSetVariable = (VariableTree) methodInvocationTree.parent();
+            resultSet = resultSetVariable.symbol();
             break;
         }
 
@@ -168,13 +172,15 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
 
     }
 
-    List<String> extractSelectedSQLColumns(String query){
+    static List<String> extractSelectedSQLColumns(String query){
+        query = query.toUpperCase();
+        query = query.replaceAll("^['\"]", "");
+        query = query.replaceAll("['\"]$", "");
         List<String> columns = new ArrayList<>();
         Matcher matcher = SELECTED_COLUMNS_PATTERN.matcher(query);
         if (matcher.matches()) {
             String columnString = matcher.group(1);
             columns = Arrays.asList(columnString.split(","));
-            columns.replaceAll(String::toUpperCase);
             columns.replaceAll(column -> column.replaceAll("\\s+", " "));
             columns.replaceAll(column -> column.contains(" AS ") ? column.split(" AS ")[1].trim() : column.trim());
         }
