@@ -46,7 +46,7 @@ class JavaRulesDefinitionTest {
         RulesDefinition.Context context = new RulesDefinition.Context();
         rulesDefinition.define(context);
         repository = context.repository(rulesDefinition.repositoryKey());
-        rulesSize = 15;
+        rulesSize = 16;
     }
 
     @Test
