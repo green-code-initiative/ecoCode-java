@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-class MyClass2 {
-    MyClass(MyClass mc) {
+class IncrementCheckBinaryExpression {
+    IncrementCheckBinaryExpression(IncrementCheckBinaryExpression mc) {
     }
     void unaryExpressionWithinBinaryExpression() {
         var i = 0;
