@@ -39,7 +39,6 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled
     void testHasIssues1() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant1.java")
@@ -56,7 +55,6 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled
     void testHasIssues3() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant3.java")
@@ -65,7 +63,6 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled
     void testHasIssues4() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant4.java")
@@ -74,7 +71,6 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled
     void testHasIssues5() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant5.java")
@@ -83,7 +79,7 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled
+    @Disabled // case not handled yet
     void testHasIssues6() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant6.java")
@@ -134,7 +130,6 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled
     void testHasNoIssues6() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedCompliant6.java")

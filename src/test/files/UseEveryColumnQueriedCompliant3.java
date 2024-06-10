@@ -37,10 +37,10 @@ public class UseEveryColumnQueriedCompliant3 {
 				ResultSet rs = stmt.executeQuery(QUERY);) {
 			while (rs.next()) {
 				// Display values
-				System.out.print("ID: " + rs.getInt("1"));
-				System.out.print(", Age: " + rs.getInt("4"));
-				System.out.print(", First: " + rs.getString("2"));
-				System.out.println(", Last: " + rs.getString("3"));
+				System.out.print("ID: " + rs.getInt(1));
+				System.out.print(", Age: " + rs.getInt(4));
+				System.out.print(", First: " + rs.getString(2));
+				System.out.println(", Last: " + rs.getString(3));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

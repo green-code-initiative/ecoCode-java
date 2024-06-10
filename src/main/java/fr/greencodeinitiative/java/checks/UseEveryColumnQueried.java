@@ -24,12 +24,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.eclipse.jdt.internal.core.Member;
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.semantic.MethodMatchers;
 import org.sonar.plugins.java.api.semantic.Symbol;
-import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
 import org.sonar.plugins.java.api.semantic.Symbol.VariableSymbol;
 import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.Arguments;
@@ -54,7 +52,6 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         .ofSubTypes(JAVA_SQL_STATEMENT)
         //TODO : also take into account addBatch and executeBatch
         .names("executeQuery", "execute", "executeUpdate", "executeLargeUpdate")
-        // TODO : take into account variable instead of just a string as parameters
         .addParametersMatcher("java.lang.String")
         .build();
     private static MethodMatchers SQL_STATEMENT_RETRIEVE_RESULTSET = MethodMatchers
@@ -63,13 +60,21 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         .names("executeQuery", "getResultSet")
         .withAnyParameters()
         .build();
-    private static final MethodMatchers SQL_RESULTSET_GET = MethodMatchers
+    private static final MethodMatchers SQL_RESULTSET_GET_COLNAME = MethodMatchers
         .create()
         .ofSubTypes(JAVA_SQL_RESULTSET)
         .names("getInt", "getString", "getLong", "getDouble", "getFloat", "getBoolean", "getByte", "getShort", "getBigDecimal", 
         "getTimestamp", "getDate", "getTime", "getObject", "getArray", "getBlob", "getClob", "getRef", "getRowId", 
         "getNClob", "getSQLXML", "getURL", "getNString", "getNCharacterStream", "getCharacterStream", "getAsciiStream", "getBinaryStream")
         .addParametersMatcher("java.lang.String")
+        .build();
+    private static final MethodMatchers SQL_RESULTSET_GET_COLID = MethodMatchers
+        .create()
+        .ofSubTypes(JAVA_SQL_RESULTSET)
+        .names("getInt", "getString", "getLong", "getDouble", "getFloat", "getBoolean", "getByte", "getShort", "getBigDecimal", 
+        "getTimestamp", "getDate", "getTime", "getObject", "getArray", "getBlob", "getClob", "getRef", "getRowId", 
+        "getNClob", "getSQLXML", "getURL", "getNString", "getNCharacterStream", "getCharacterStream", "getAsciiStream", "getBinaryStream")
+        .addParametersMatcher("int")
         .build();
     private static final Pattern SELECTED_COLUMNS_PATTERN = Pattern.compile("SELECT\\s+(.*)\\s+FROM\\s+.*");
 
@@ -107,10 +112,17 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
             return;
         }
         ExpressionTree argument = arguments.get(0);
-        if(!argument.is(Tree.Kind.STRING_LITERAL)){
+        String query;
+        if(argument.is(Tree.Kind.STRING_LITERAL)){
+            query = ((LiteralTree) argument).value();
+        } else if(argument.is(Tree.Kind.IDENTIFIER)){
+            query = extractValueFromVariable((IdentifierTree) argument);
+        } else {
             return;
         }
-        String query = ((LiteralTree) argument).value();
+        if(query == null){
+            return;
+        }
         List<String> selectedColumns = extractSelectedSQLColumns(query);
 
         // STEP 2 : retrieve the resultSet object
@@ -118,37 +130,79 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         List<IdentifierTree> usages = statement.usages();
         Symbol resultSet = null;
         for(IdentifierTree usage : usages) {
-            Tree methodInvocation = getMethodInvocationFromTree(usage);
-            if(methodInvocation == null){
+            MethodInvocationTree methodInvocation = getMethodInvocationFromTree(usage);
+            if(methodInvocation == null ){
                 continue;
             }
-            resultSet = ((VariableTree) methodInvocationTree.parent()).symbol();
-            break;
+            if(SQL_STATEMENT_RETRIEVE_RESULTSET.matches(methodInvocation)){
+                Tree parent = methodInvocation.parent();
+                if(parent.is(Tree.Kind.VARIABLE)){
+                    resultSet = ((VariableTree) parent).symbol();
+                    break;
+                }
+            }
+        }
+
+        // STEP 2.1 check if the resultSet is used as a parameter of a method
+        // if it is, this check this check cannot be applied
+        if(resultSet == null) {
+            return;
+        }
+        List<IdentifierTree> resultSetUsages = resultSet.usages();
+        for(IdentifierTree usage : resultSetUsages) {
+            Tree parent = usage.parent();
+            if(parent.is(Tree.Kind.ARGUMENTS)){
+                return;
+            }
+        }
+
+        // STEP 2.2 check if the resultSet is reassigned
+        for(IdentifierTree usage : resultSetUsages) {
+            Tree parent = usage.parent();
+            if(parent.is(Tree.Kind.ASSIGNMENT)){
+                AssignmentExpressionTree assignment = (AssignmentExpressionTree) parent;
+                ExpressionTree expressionTree = assignment.variable();
+                if(expressionTree.is(Tree.Kind.IDENTIFIER)){
+                    if(resultSet.equals(((IdentifierTree) expressionTree).symbol())) {
+                        return;
+                    }
+                }
+            }
         }
 
         // STEP 3 : retrieve the columns used from the resultSet object
 
-        if(resultSet == null) {
-            return;
-        }
-
         List<String> usedColumns = new ArrayList<>();
-        List<IdentifierTree> resultSetUsages = resultSet.usages();
         for(IdentifierTree usage : resultSetUsages) {
+            if(usage.parent().is(Tree.Kind.ASSIGNMENT)){
+                break;
+            }
             MethodInvocationTree methodInvocation = getMethodInvocationFromTree(usage);
-            if(!SQL_RESULTSET_GET.matches(methodInvocation)) {
+            if(methodInvocation == null ){
                 continue;
             }
-            ExpressionTree columnET = methodInvocation.arguments().get(0);
-            if(!columnET.is(Tree.Kind.STRING_LITERAL)) {
-                continue;
+            if(SQL_RESULTSET_GET_COLNAME.matches(methodInvocation)) {
+                ExpressionTree columnET = methodInvocation.arguments().get(0);
+                if(!columnET.is(Tree.Kind.STRING_LITERAL)) {
+                    continue;
+                }
+                String column = ((LiteralTree) columnET).value();
+
+                column = column.toUpperCase();
+                column = column.replaceAll("^['\"]", "");
+                column = column.replaceAll("['\"]$", "");
+                usedColumns.add(column);
+            } else if(SQL_RESULTSET_GET_COLID.matches(methodInvocation)) {
+                ExpressionTree columnET = methodInvocation.arguments().get(0);
+                if(!columnET.is(Tree.Kind.INT_LITERAL)) {
+                    continue;
+                }
+                int column = Integer.parseInt(((LiteralTree) columnET).value());
+                if(column > selectedColumns.size()) {
+                    continue;
+                }
+                usedColumns.add(selectedColumns.get(column - 1));
             }
-            String column = ((LiteralTree) columnET).value();
-            
-            column = column.toUpperCase();
-            column = column.replaceAll("^['\"]", "");
-            column = column.replaceAll("['\"]$", "");
-            usedColumns.add(column);
         }
 
         // STEP 4 : compare selected and used columns, report issues
@@ -161,19 +215,51 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
 
     }
 
-    private static MethodInvocationTree getMethodInvocationFromTree(Tree tree) {
-        Tree parent = tree.parent();
-        if(!parent.is(Tree.Kind.MEMBER_SELECT)){
-            return null;
-        }
-        while(!parent.is(Tree.Kind.METHOD_INVOCATION) && parent != null){
+    private static MethodInvocationTree getMethodInvocationFromTree(IdentifierTree tree) {
+        Tree parent = tree;
+        while(parent != null && !parent.is(Tree.Kind.METHOD_INVOCATION) ){
             parent = parent.parent();
         }
         if(parent == null){
             return null;
         }
-
         return (MethodInvocationTree) parent;
+    }
+
+    private static String extractValueFromVariable(IdentifierTree tree){
+        Symbol symbol = tree.symbol();
+        if(symbol == null) {
+            return null;
+        }
+        //accept this value if it's a final variable or it's a variable that is not reassigned
+        if(!symbol.isFinal()){
+            List<IdentifierTree> usages = symbol.usages();
+            int assignementCount = 0;
+            for(IdentifierTree usage : usages) {
+                Tree parent = usage.parent();
+                if(parent.is(Tree.Kind.ASSIGNMENT)){
+                    assignementCount++;
+                }
+            }
+            if(assignementCount > 1){
+                return null;
+            }
+        }
+        if(symbol.isVariableSymbol()) {
+            VariableSymbol variableSymbol = (VariableSymbol) symbol;
+            Type type = variableSymbol.type();
+            if(type.is("java.lang.String")) {
+                Tree assignement = variableSymbol.declaration();
+                if(assignement.is(Tree.Kind.VARIABLE)){
+                    VariableTree variableTree = (VariableTree) assignement;
+                    ExpressionTree initializer = variableTree.initializer();
+                    if(initializer.is(Tree.Kind.STRING_LITERAL)){
+                        return ((LiteralTree) initializer).value();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     static List<String> extractSelectedSQLColumns(String query){
