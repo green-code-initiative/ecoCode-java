@@ -24,12 +24,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.semantic.MethodMatchers;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.semantic.Symbol.VariableSymbol;
-import org.sonar.plugins.java.api.semantic.Type;
 import org.sonar.plugins.java.api.tree.Arguments;
 import org.sonar.plugins.java.api.tree.AssignmentExpressionTree;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
@@ -90,43 +91,99 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         if(!SQL_STATEMENT_DECLARE_SQL.matches(methodInvocationTree)) {
             return;
         }
+        List<String> selectedColumns = getSelectedColumns(methodInvocationTree);
+        if(selectedColumns.isEmpty()) {
+            return;
+        }
+        List<String> usedColumns = getUsedColumns(methodInvocationTree, selectedColumns);
+        if(usedColumns == null) {
+            return;
+        }
+        List<String> differences = selectedColumns.stream()
+                    .filter(element -> !usedColumns.contains(element))
+                    .collect(Collectors.toList());
+        if(!differences.isEmpty()) {
+            reportIssue(methodInvocationTree, MESSAGERULE);
+        }
+    }
+
+    private static List<String> getSelectedColumns(MethodInvocationTree methodInvocationTree) {
+        Arguments arguments = methodInvocationTree.arguments();
+        if(arguments.isEmpty()) {
+            return new ArrayList<>();
+        }
+        ExpressionTree argument = arguments.get(0);
+        LiteralTree litteral = extractLiteralFromVariable(argument);
+        if(litteral == null) {
+            return new ArrayList<>();
+        }
+        String query = litteral.value();
+        List<String> selectedColumns = extractSelectedSQLColumns(query);
+        return selectedColumns;
+    }
+
+    @Nullable
+    private static List<String> getUsedColumns(MethodInvocationTree methodInvocationTree, List<String> selectedColumns){
+        Symbol resultSet = getResultSetNode(methodInvocationTree);
+
+        if(resultSet == null || isResultSetInvalid(resultSet)) {
+            return null;
+        }
+
+        List<String> usedColumns = new ArrayList<>();
+        List<IdentifierTree> resultSetUsages = resultSet.usages();
+        for(IdentifierTree usage : resultSetUsages) {
+            if(usage.parent().is(Tree.Kind.ASSIGNMENT)){
+                break;
+            }
+            MethodInvocationTree methodInvocation = getMethodInvocationFromTree(usage);
+            if(methodInvocation == null ){
+                continue;
+            }
+            if(methodInvocation.arguments().isEmpty()){
+                continue;
+            }
+            ExpressionTree parameter = methodInvocation.arguments().get(0);
+            LiteralTree columnGot = extractLiteralFromVariable(parameter);
+            if(columnGot == null){
+                continue;
+            }
+            String column;
+            String value = columnGot.value();
+            if(SQL_RESULTSET_GET_COLNAME.matches(methodInvocation) && columnGot.is(Tree.Kind.STRING_LITERAL)) {
+                column = value.toUpperCase();
+                column = column.replaceAll("^['\"]", "");
+                column = column.replaceAll("['\"]$", "");
+            } else if(SQL_RESULTSET_GET_COLID.matches(methodInvocation) && columnGot.is(Tree.Kind.INT_LITERAL)) {
+                int columnId = Integer.parseInt(value);
+                if(columnId > selectedColumns.size()) {
+                    break;
+                }
+                column = selectedColumns.get(columnId - 1);
+            } else {
+                continue;
+            }
+            usedColumns.add(column);
+        }
+        return usedColumns;
+    }
+
+    @Nullable
+    private static Symbol getResultSetNode(MethodInvocationTree methodInvocationTree) {
         ExpressionTree et = methodInvocationTree.methodSelect();
         if(!et.is(Tree.Kind.MEMBER_SELECT)) {
-            return;
+            return null;
         }
         MemberSelectExpressionTree mset = (MemberSelectExpressionTree) et;
         ExpressionTree expression = mset.expression();
         if(!expression.is(Tree.Kind.IDENTIFIER)) {
-            return;
+            return null;
         }
         IdentifierTree id = (IdentifierTree) expression;
         Symbol statement = id.symbol();
         if(statement == null) {
-            return;
+            return null;
         }
-
-        // STEP 1 : retrieve the selected columns in the query
-
-        Arguments arguments = methodInvocationTree.arguments();
-        if(arguments.isEmpty()) {
-            return;
-        }
-        ExpressionTree argument = arguments.get(0);
-        String query;
-        if(argument.is(Tree.Kind.STRING_LITERAL)){
-            query = ((LiteralTree) argument).value();
-        } else if(argument.is(Tree.Kind.IDENTIFIER)){
-            query = extractValueFromVariable((IdentifierTree) argument);
-        } else {
-            return;
-        }
-        if(query == null){
-            return;
-        }
-        List<String> selectedColumns = extractSelectedSQLColumns(query);
-
-        // STEP 2 : retrieve the resultSet object
-
         List<IdentifierTree> usages = statement.usages();
         Symbol resultSet = null;
         for(IdentifierTree usage : usages) {
@@ -142,79 +199,9 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
                 }
             }
         }
-
-        // STEP 2.1 check if the resultSet is used as a parameter of a method
-        // if it is, this check this check cannot be applied
-        if(resultSet == null) {
-            return;
-        }
-        List<IdentifierTree> resultSetUsages = resultSet.usages();
-        for(IdentifierTree usage : resultSetUsages) {
-            Tree parent = usage.parent();
-            if(parent.is(Tree.Kind.ARGUMENTS)){
-                return;
-            }
-        }
-
-        // STEP 2.2 check if the resultSet is reassigned
-        for(IdentifierTree usage : resultSetUsages) {
-            Tree parent = usage.parent();
-            if(parent.is(Tree.Kind.ASSIGNMENT)){
-                AssignmentExpressionTree assignment = (AssignmentExpressionTree) parent;
-                ExpressionTree expressionTree = assignment.variable();
-                if(expressionTree.is(Tree.Kind.IDENTIFIER)){
-                    if(resultSet.equals(((IdentifierTree) expressionTree).symbol())) {
-                        return;
-                    }
-                }
-            }
-        }
-
-        // STEP 3 : retrieve the columns used from the resultSet object
-
-        List<String> usedColumns = new ArrayList<>();
-        for(IdentifierTree usage : resultSetUsages) {
-            if(usage.parent().is(Tree.Kind.ASSIGNMENT)){
-                break;
-            }
-            MethodInvocationTree methodInvocation = getMethodInvocationFromTree(usage);
-            if(methodInvocation == null ){
-                continue;
-            }
-            if(SQL_RESULTSET_GET_COLNAME.matches(methodInvocation)) {
-                ExpressionTree columnET = methodInvocation.arguments().get(0);
-                if(!columnET.is(Tree.Kind.STRING_LITERAL)) {
-                    continue;
-                }
-                String column = ((LiteralTree) columnET).value();
-
-                column = column.toUpperCase();
-                column = column.replaceAll("^['\"]", "");
-                column = column.replaceAll("['\"]$", "");
-                usedColumns.add(column);
-            } else if(SQL_RESULTSET_GET_COLID.matches(methodInvocation)) {
-                ExpressionTree columnET = methodInvocation.arguments().get(0);
-                if(!columnET.is(Tree.Kind.INT_LITERAL)) {
-                    continue;
-                }
-                int column = Integer.parseInt(((LiteralTree) columnET).value());
-                if(column > selectedColumns.size()) {
-                    continue;
-                }
-                usedColumns.add(selectedColumns.get(column - 1));
-            }
-        }
-
-        // STEP 4 : compare selected and used columns, report issues
-        List<String> differences = selectedColumns.stream()
-                    .filter(element -> !usedColumns.contains(element))
-                    .collect(Collectors.toList());
-        if(!differences.isEmpty()) {
-            reportIssue(methodInvocationTree, MESSAGERULE);
-        }
-
+        return resultSet;
     }
-
+    @Nullable
     private static MethodInvocationTree getMethodInvocationFromTree(IdentifierTree tree) {
         Tree parent = tree;
         while(parent != null && !parent.is(Tree.Kind.METHOD_INVOCATION) ){
@@ -226,43 +213,71 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         return (MethodInvocationTree) parent;
     }
 
-    private static String extractValueFromVariable(IdentifierTree tree){
-        Symbol symbol = tree.symbol();
+    @Nullable
+    private static LiteralTree extractLiteralFromVariable(ExpressionTree tree){ 
+        if(tree == null || tree instanceof LiteralTree){
+            return (LiteralTree) tree;
+        }
+        if (!tree.is(Tree.Kind.IDENTIFIER)) {
+            return null;
+        }
+        IdentifierTree identifierTree = (IdentifierTree) tree;
+        Symbol symbol = identifierTree.symbol();
         if(symbol == null) {
             return null;
         }
-        //accept this value if it's a final variable or it's a variable that is not reassigned
         if(!symbol.isFinal()){
-            List<IdentifierTree> usages = symbol.usages();
-            int assignementCount = 0;
-            for(IdentifierTree usage : usages) {
-                Tree parent = usage.parent();
-                if(parent.is(Tree.Kind.ASSIGNMENT)){
-                    assignementCount++;
-                }
-            }
-            if(assignementCount > 1){
-                return null;
-            }
+            return null;
         }
         if(symbol.isVariableSymbol()) {
             VariableSymbol variableSymbol = (VariableSymbol) symbol;
-            Type type = variableSymbol.type();
-            if(type.is("java.lang.String")) {
-                Tree assignement = variableSymbol.declaration();
-                if(assignement.is(Tree.Kind.VARIABLE)){
-                    VariableTree variableTree = (VariableTree) assignement;
-                    ExpressionTree initializer = variableTree.initializer();
-                    if(initializer.is(Tree.Kind.STRING_LITERAL)){
-                        return ((LiteralTree) initializer).value();
-                    }
-                }
+            Tree assignement = variableSymbol.declaration();
+            if(assignement.is(Tree.Kind.VARIABLE)){
+                VariableTree variableTree = (VariableTree) assignement;
+                ExpressionTree initializer = variableTree.initializer();
+                return extractLiteralFromVariable(initializer);
             }
         }
         return null;
     }
 
+    private static boolean isResultSetInvalid(Symbol resultSet) {
+        return  isResultSetUsedInMethod(resultSet)
+             || isResultSetReassigned(resultSet);
+    }
+
+    private static boolean isResultSetUsedInMethod(Symbol resultSet) {
+        List<IdentifierTree> resultSetUsages = resultSet.usages();
+        for(IdentifierTree usage : resultSetUsages) {
+            Tree parent = usage.parent();
+            if(parent.is(Tree.Kind.ARGUMENTS)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isResultSetReassigned(Symbol resultSet) {
+        List<IdentifierTree> resultSetUsages = resultSet.usages();
+        for(IdentifierTree usage : resultSetUsages) {
+            Tree parent = usage.parent();
+            if(parent.is(Tree.Kind.ASSIGNMENT)){
+                AssignmentExpressionTree assignment = (AssignmentExpressionTree) parent;
+                ExpressionTree expressionTree = assignment.variable();
+                if(expressionTree.is(Tree.Kind.IDENTIFIER)){
+                    if(resultSet.equals(((IdentifierTree) expressionTree).symbol())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     static List<String> extractSelectedSQLColumns(String query){
+        if(query == null){
+            return new ArrayList<>();
+        }
         query = query.toUpperCase();
         query = query.replaceAll("^['\"]", "");
         query = query.replaceAll("['\"]$", "");

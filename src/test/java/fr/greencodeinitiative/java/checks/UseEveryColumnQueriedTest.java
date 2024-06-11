@@ -71,6 +71,7 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
+    @Disabled // case not handled (multiple queries with the same ResultSet object)
     void testHasIssues5() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant5.java")
@@ -79,7 +80,7 @@ class UseEveryColumnQueriedTest {
     }
 
     @Test
-    @Disabled // case not handled yet
+    @Disabled // case not handled (usage of a method)
     void testHasIssues6() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/UseEveryColumnQueriedNonCompliant6.java")

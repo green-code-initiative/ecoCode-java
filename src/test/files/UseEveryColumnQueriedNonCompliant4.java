@@ -29,6 +29,7 @@ public class UseEveryColumnQueriedNonCompliant4 {
 	private static final String USER = "guest";
 	private static final String PASS = "guest123";
 	private static final String QUERY = "SELECT id, first, last, age FROM Registration";
+	private static final String ID = "id";
 
 	public void callJdbc() {
 
@@ -37,7 +38,7 @@ public class UseEveryColumnQueriedNonCompliant4 {
 				ResultSet rs = stmt.executeQuery(QUERY);) { // Noncompliant {{Avoid querying SQL columns that are not used}}
 			while (rs.next()) {
 				// Display values
-				System.out.print("ID: " + rs.getInt("id"));
+				System.out.print("ID: " + rs.getInt(ID));
 				System.out.print(", First: " + rs.getString(2));
 				System.out.println(", Last: " + rs.getString("last"));
 			}

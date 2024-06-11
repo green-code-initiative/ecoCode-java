@@ -29,6 +29,8 @@ public class UseEveryColumnQueriedCompliant4 {
 	private static final String USER = "guest";
 	private static final String PASS = "guest123";
 	private static final String QUERY = "SELECT id, first, last, age FROM Registration";
+	private static final String ID = "id";
+	private static final int AGE = 4;
 
 	public void callJdbc() {
 
@@ -37,8 +39,8 @@ public class UseEveryColumnQueriedCompliant4 {
 				ResultSet rs = stmt.executeQuery(QUERY);) {
 			while (rs.next()) {
 				// Display values
-				System.out.print("ID: " + rs.getInt("id"));
-				System.out.print(", Age: " + rs.getInt(4));
+				System.out.print("ID: " + rs.getInt(ID));
+				System.out.print(", Age: " + rs.getInt(AGE));
 				System.out.print(", First: " + rs.getString(2));
 				System.out.println(", Last: " + rs.getString("last"));
 			}
