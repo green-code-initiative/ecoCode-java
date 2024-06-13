@@ -15,25 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.greencodeinitiative.java;
+class UseOptionalOrElseGetVsOrElse {
 
-import org.junit.jupiter.api.Test;
-import org.sonar.plugins.java.api.CheckRegistrar;
+    public static final String name = Optional.of("ecoCode").orElse(getUnpredictedMethod()); // Noncompliant {{Use optional orElseGet instead of orElse.}}
 
-import static org.assertj.core.api.Assertions.assertThat;
+    public static final String name = Optional.of("ecoCode").orElseGet(() -> getUnpredictedMethod()); // Compliant
 
-class JavaCheckRegistrarTest {
-
-    @Test
-    void checkNumberRules() {
-        final CheckRegistrar.RegistrarContext context = new CheckRegistrar.RegistrarContext();
-
-        final JavaCheckRegistrar registrar = new JavaCheckRegistrar();
-        registrar.register(context);
-
-        assertThat(context.checkClasses()).hasSize(16);
-        assertThat(context.testCheckClasses()).isEmpty();
-
-    }
-
+    public static final String name = randomClass.orElse(getUnpredictedMethod()); // Compliant
 }
