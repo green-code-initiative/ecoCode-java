@@ -17,29 +17,12 @@
  */
 package fr.greencodeinitiative.java.checks;
 
-import org.junit.jupiter.api.Test;
-import org.sonar.java.checks.verifier.CheckVerifier;
+import java.util.regex.Pattern;
 
-class AvoidRegexPatternNotStaticTest {
+public class ValidParamRegexPattern {
 
-    @Test
-    void testHasIssues() {
-        CheckVerifier.newVerifier()
-                .onFile("src/test/files/AvoidRegexPatternNotStatic.java")
-                .withCheck(new AvoidRegexPatternNotStatic())
-                .verifyIssues();
-    }
-
-    @Test
-    void testHasNoIssues() {
-        CheckVerifier.newVerifier()
-                .onFiles(
-                        "src/test/files/ValidRegexPattern.java",
-                        "src/test/files/ValidRegexPattern2.java",
-                        "src/test/files/ValidRegexPattern3.java",
-                        "src/test/files/ValidParamRegexPattern.java"
-                )
-                .withCheck(new AvoidRegexPatternNotStatic())
-                .verifyNoIssues();
+    public void epjPatternWithParam(String codeEpj) {
+        final Pattern pattern = Pattern.compile("\"codeEpj\"\\s*:\\s" + codeEpj + ","); // Compliant - Pattern is used with a parameter
+        final Pattern pattern2 = Pattern.compile(codeEpj); // Compliant - Pattern is used with a parameter
     }
 }
