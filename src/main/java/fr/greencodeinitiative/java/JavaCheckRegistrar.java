@@ -17,27 +17,13 @@
  */
 package fr.greencodeinitiative.java;
 
-import java.util.Collections;
-import java.util.List;
-
-import fr.greencodeinitiative.java.checks.ArrayCopyCheck;
-import fr.greencodeinitiative.java.checks.AvoidFullSQLRequest;
-import fr.greencodeinitiative.java.checks.AvoidGettingSizeCollectionInLoop;
-import fr.greencodeinitiative.java.checks.AvoidMultipleIfElseStatement;
-import fr.greencodeinitiative.java.checks.AvoidRegexPatternNotStatic;
-import fr.greencodeinitiative.java.checks.AvoidSQLRequestInLoop;
-import fr.greencodeinitiative.java.checks.AvoidSetConstantInBatchUpdate;
-import fr.greencodeinitiative.java.checks.AvoidSpringRepositoryCallInLoopOrStreamCheck;
-import fr.greencodeinitiative.java.checks.AvoidStatementForDMLQueries;
-import fr.greencodeinitiative.java.checks.AvoidUsageOfStaticCollections;
-import fr.greencodeinitiative.java.checks.FreeResourcesOfAutoCloseableInterface;
-import fr.greencodeinitiative.java.checks.IncrementCheck;
-import fr.greencodeinitiative.java.checks.InitializeBufferWithAppropriateSize;
-import fr.greencodeinitiative.java.checks.NoFunctionCallWhenDeclaringForLoop;
-import fr.greencodeinitiative.java.checks.OptimizeReadFileExceptions;
+import fr.greencodeinitiative.java.checks.*;
 import org.sonar.plugins.java.api.CheckRegistrar;
 import org.sonar.plugins.java.api.JavaCheck;
 import org.sonarsource.api.sonarlint.SonarLintSide;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Provide the "checks" (implementations of rules) classes that are going be executed during
@@ -62,7 +48,10 @@ public class JavaCheckRegistrar implements CheckRegistrar {
             InitializeBufferWithAppropriateSize.class,
             AvoidSetConstantInBatchUpdate.class,
             FreeResourcesOfAutoCloseableInterface.class,
-            AvoidMultipleIfElseStatement.class
+            AvoidMultipleIfElseStatement.class,
+            AvoidEnergyConsumingMethods.class,
+            MakeNonReassignedVariablesConstants.class,
+            ForceLazyFetchTypeForJPA.class
     );
 
     /**
