@@ -1,7 +1,13 @@
-version: "3.3"
+---
+name: ecocode_java
 services:
   sonar:
-    image: sonarqube:10.5.1-community
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - MAVEN_BUILDER_VERSION=${MAVEN_BUILDER_VERSION}
+        - SONARQUBE_VERSION=${SONARQUBE_VERSION}
     container_name: sonar_ecocode_java
     ports:
       - "9000:9000"
@@ -15,15 +21,12 @@ services:
       SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonarqube
       SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: 'true'
     volumes:
-      - type: bind
-        source: ./target/ecocode-java-plugin-1.6.2-SNAPSHOT.jar
-        target: /opt/sonarqube/extensions/plugins/ecocode-java-plugin-1.6.2-SNAPSHOT.jar
       - "extensions:/opt/sonarqube/extensions"
       - "logs:/opt/sonarqube/logs"
       - "data:/opt/sonarqube/data"
 
   db:
-    image: postgres:12
+    image: postgres:${POSTGRES_VERSION}
     container_name: postgresql_ecocode_java
     networks:
       - sonarnet
