@@ -246,7 +246,7 @@ function check_opts() {
             -v|--verbose) VERBOSE=1 ;;
             -f|--force) FORCE=1 ;;
             -l|--logs) DISPLAY_LOGS=1 ;;
-            *) continue ;;
+            *) ARGS+=("$opt") ;;
         esac
     done
     # Help is displayed if no option is passed as script parameter
@@ -254,6 +254,18 @@ function check_opts() {
         HELP=1
     fi
     return 0
+}
+
+# @description Used by unit tests to execute a function.
+# @noargs
+# @exitcode 0 If successful.
+# @exitcode >0 If an error has been encountered while executing a function
+function execute_function() {
+    if ! [[ $(type -t "${ARGS[0]}") == function ]]; then
+        error "Function with name ${ARGS[0]} does not exist" && return 1
+    fi
+    eval "${ARGS[@]}"
+    return $?
 }
 
 # @description Execute tasks based on script parameters or user actions.
@@ -309,6 +321,11 @@ function execute_tasks() {
     return 0
 }
 
+function toto() {
+    echo "hello world"
+    return 0
+}
+
 # @description Display help.
 # @noargs
 # @exitcode 0 If successful.
@@ -341,9 +358,15 @@ ${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkat
 # @exitcode 1 If the options check failed.
 # @exitcode 2 If task execution failed.
 function main() {
-    HELP=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0 INIT=0 START=0 STOP=0 CLEAN=0 DISPLAY_LOGS=0 VERBOSE=0 FORCE=0
+    ARGS=() HELP=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0 INIT=0 START=0 STOP=0 CLEAN=0 DISPLAY_LOGS=0 VERBOSE=0 FORCE=0
     # Check options passed as script parameters and execute tasks
     ! check_opts "$@" && return 1
+    # Used by unit tests to execute a function
+    if [[ -n "${ARGS[0]}" ]]; then
+        execute_function
+        return $?
+    fi
+    # Execute one or more tasks according to script parameters
     ! execute_tasks && return 2
     return 0
 }

@@ -13,3 +13,6 @@
 target
 bin
 dependency-reduced-pom.xml
+release.properties
+pom.xml.*
+tests/__pycache__

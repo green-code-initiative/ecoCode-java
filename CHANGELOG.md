@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deleted
 
+## [1.7.0] - 2024-07-13
+
+### Added
+
+- Add **toolbox.sh** utility script for SonarQube development environment installation
+- Addition of the pytest framework for unit testing bash scripts
+
+### Changed
+
+- Update of the "Getting Started" section in the README file
+
+### Deleted
+
+- Removal of utility scripts already present in the toolbox.sh script
+
 ## [1.6.1] - 2024-05-15
 
 ### Changed

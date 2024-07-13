@@ -1,0 +1,21 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "ecoCode-java"
+version = "1.0.0"
+description = ""
+authors = ["ecoCode"]
+license = "GPL-3.0"
+readme = "README.md"
+repository = "https://github.com/green-code-initiative/ecoCode-java"
+packages = [{include = "tests/*.py"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.test]
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.2"
+pytest-shell = "^0.3.2"
