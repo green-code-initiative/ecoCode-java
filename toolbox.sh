@@ -2,17 +2,10 @@
 # @name toolbox.sh
 # @brief **toolbox.sh** is a utility script for installing the SonarQube dev environment.
 # @description
-#   This toolbox enables you to perform the following actions:
-#
-#       * Installing the SonarQube dev environment
-#       * Run unit tests with **pytest**
-#       * Linter the code with the **shellcheck** utility
-#       * Generating the API documentation with the **shdoc** utility
-#       * Generating a site from markdown files with **mkdocs**
+#   This toolbox enables you to install the SonarQube dev environment.
 
 # Global variables
 CURRENT_PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-DOC_PATH="$CURRENT_PATH/docs"
 ECOCODE_DC_FILE="$CURRENT_PATH/docker-compose.yml"
 ECOCODE_DOCKER_ENV="$CURRENT_PATH/.default.docker.env"
 ECOCODE_JAVA_PLUGIN_VERSION=$(< "$CURRENT_PATH/pom.xml" grep "<version>"|head -n1|sed 's/<\(\/\)*version>//g'|xargs)
@@ -80,80 +73,6 @@ function docker_build() {
     return 0
 }
 
-# @description Creating and starting Docker containers.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error was encountered during container creating.
-function docker_up() {
-    ! docker_env_source && return 1
-    info "Creating and starting Docker containers"
-    debug "docker compose -f $ECOCODE_DC_FILE up --build -d"
-    ! docker compose -f "$ECOCODE_DC_FILE" up --build -d && return 2
-    return 0
-}
-
-# @description Starting Docker containers.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error was encountered during container startup.
-function docker_start() {
-    ! docker_env_source && return 1
-    info "Starting Docker containers"
-    debug "docker compose -f $ECOCODE_DC_FILE start"
-    ! TOKEN=$ECOCODE_TOKEN docker compose -f "$ECOCODE_DC_FILE" start && return 2
-    return 0
-}
-
-# @description Stopping Docker containers.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error was encountered during container shutdown.
-function docker_stop() {
-    ! docker_env_source && return 1
-    info "Stopping Docker containers"
-    debug "docker compose -f $ECOCODE_DC_FILE stop"
-    ! docker compose -f "$ECOCODE_DC_FILE" stop && return 2
-    return 0
-}
-
-# @description Stop and remove containers, networks and volumes.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error was encountered during deletion.
-function docker_down() {
-    ! docker_env_source && return 1
-    info "Remove Docker containers, networks and volumes"
-    debug "docker compose -f $ECOCODE_DC_FILE down --volumes"
-    ! docker compose -f "$ECOCODE_DC_FILE" down --volumes && return 2
-    return 0
-}
-
-# @description Use maven plugin release to prepare locally next release and next SNAPSHOT.
-# @noargs
-# @exitcode 0 If successful.
-function release_prepare() {
-    # creation of 2 commits with release and next SNAPSHOT
-    if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
-        return 1
-    fi
-    sleep 2
-    return 0
-}
-
-# @description Clean temporary files.
-# @noargs
-# @exitcode 0 If successful.
-function release_clean() {
-    if ! mvn release:clean; then
-        return 1
-    fi
-    return 0
-}
-
 # @description Display Docker service logs.
 # @noargs
 # @exitcode 0 If successful.
@@ -170,10 +89,14 @@ function docker_logs() {
 # @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered when building project code in the target folder.
-# @exitcode 2 If an error was encountered while initialize docker compose.
+# @exitcode 2 If an error was encountered retrieving environment variables.
+# @exitcode 3 If an error was encountered during container creating.
 function init() {
     ! build && return 1
-    ! docker_up && return 2
+    ! docker_env_source && return 2
+    info "Creating and starting Docker containers"
+    debug "docker compose -f $ECOCODE_DC_FILE up --build -d"
+    ! docker compose -f "$ECOCODE_DC_FILE" up --build -d && return 3
     return 0
 }
 
@@ -181,43 +104,64 @@ function init() {
 # @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If the ecoCode plugin is not present in the target folder.
-# @exitcode 2 If an error is encountered when starting Docker containers.
+# @exitcode 2 If an error was encountered retrieving environment variables.
+# @exitcode 3 If an error was encountered during container startup.
 function start() {
     # Check that the plugin is present in the target folder
     if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]]; then
         error "Cannot find ecoCode plugin in target directory" && return 1
     fi
-    ! docker_start && return 2
+    ! docker_env_source && return 2
+    info "Starting Docker containers"
+    debug "docker compose -f $ECOCODE_DC_FILE start"
+    ! TOKEN=$ECOCODE_TOKEN docker compose -f "$ECOCODE_DC_FILE" start && return 3
     return 0
 }
 
 # @description Stopping Docker containers.
 # @noargs
 # @exitcode 0 If successful.
-# @exitcode 1 If an error is encountered when stopping Docker containers.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+# @exitcode 2 If an error was encountered during container shutdown.
 function stop() {
-    ! docker_stop && return 1
+    ! docker_env_source && return 1
+    info "Stopping Docker containers"
+    debug "docker compose -f $ECOCODE_DC_FILE stop"
+    ! docker compose -f "$ECOCODE_DC_FILE" stop && return 2
+    return 0
     return 0
 }
 
 # @description Stop and remove containers, networks and volumes.
 # @noargs
 # @exitcode 0 If successful.
-# @exitcode 1 If an error is encountered when cleaning Docker services.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+# @exitcode 2 If an error was encountered during deletion.
 function clean() {
-    ! docker_down && return 1
+    ! docker_env_source && return 1
+    info "Remove Docker containers, networks and volumes"
+    debug "docker compose -f $ECOCODE_DC_FILE down --volumes"
+    ! docker compose -f "$ECOCODE_DC_FILE" down --volumes && return 2
+
     [[ $FORCE -gt 0 ]] && rm -rf "$CURRENT_PATH/target"
     return 0
 }
 
-# @description Use maven plugin to create a new release.
+# @description Use maven plugin release to prepare locally next release and next SNAPSHOT.
 # @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error is encountered when prepare the release.
-# @exitcode 1 If an error is encountered when cleaning files.
+# @exitcode 2 If an error is encountered when cleaning files.
 function release() {
-    ! release_prepare && return 1
-    ! release_clean && return 2
+    # creation of 2 commits with release and next SNAPSHOT
+    if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
+        return 1
+    fi
+    sleep 2
+    # Clean temporary files
+    if ! mvn release:clean; then
+        return 2
+    fi
     return 0
 }
 
@@ -262,42 +206,6 @@ function display_logs() {
     return 0
 }
 
-# @description Run unit tests.
-# @noargs
-# @exitcode 0 If successful.
-function run_tests() {
-    info "Run unit tests"
-    pytest tests/test_*.py
-    return 0
-}
-
-# @description Linter the application's bash code.
-# @noargs
-# @exitcode 0 If successful.
-function lint_bash() {
-    info "Linting bash code"
-    shellcheck -x toolbox.sh
-    return 0
-}
-
-# @description Generate API documentation in markdown format.
-# @noargs
-# @exitcode 0 If successful.
-function generate_bash_doc() {
-    info "Generating the toolbox API documentation"
-    shdoc < "$CURRENT_PATH/toolbox.sh" > "$DOC_PATH/toolbox.md"
-    return 0
-}
-
-# @description Start the mkdocs server to browse the API documentation in a browser.
-# @noargs
-# @exitcode 0 If successful.
-function mkdocs_server_start() {
-    info "Start the mkdocs server"
-    mkdocs serve -a 0.0.0.0:8000
-    return 0
-}
-
 # @description Check options passed as script parameters.
 # @noargs
 # @exitcode 0 If successful.
@@ -314,10 +222,10 @@ function check_opts() {
             compile) COMPILE=1 ;;
             build-docker) BUILD_DOCKER=1 ;;
             --token=*) ECOCODE_TOKEN=$(echo "$opt"|awk -F= '{print $2}') ;;
-            -h|--help) HELP=1 ;;
-            -v|--verbose) VERBOSE=1 ;;
-            -f|--force) FORCE=1 ;;
-            -l|--logs) DISPLAY_LOGS=1 ;;
+            --logs) DISPLAY_LOGS=1 ;;
+            --verbose) VERBOSE=1 ;;
+            --force) FORCE=1 ;;
+            --help) HELP=1 ;;
             *) ARGS+=("$opt") ;;
         esac
     done
@@ -360,45 +268,45 @@ function execute_tasks() {
     fi
     # Building the ecoCode plugin and creating Docker containers
     if [[ $INIT -gt 0 ]]; then
-        ! init && return 5
+        ! init && return 2
     fi
     # Starting Docker containers
     if [[ $START -gt 0 ]]; then
-        ! start && return 6
+        ! start && return 3
     fi
     # Stopping Docker containers
     if [[ $STOP -gt 0 ]]; then
-        ! stop && return 7
+        ! stop && return 4
     fi
     # Stop and remove containers, networks and volumes
     if [[ $CLEAN -gt 0 ]]; then
-        ! clean && return 8
+        ! clean && return 5
     fi
     # Use maven plugin to create a new release
     if [[ $RELEASE -gt 0 ]]; then
-        ! release && return 2
+        ! release && return 6
+    fi
+    # create an push an new branch with commits previously prepared
+    if [[ $RELEASE_PUSH -gt 0 ]]; then
+        ! release_push && return 7
     fi
     # Build the ecoCode plugin
     if [[ $BUILD -gt 0 ]]; then
-        ! build && return 2
+        ! build && return 8
     fi
     # Compile the ecoCode plugin
     if [[ $COMPILE -gt 0 ]]; then
-        ! compile && return 3
+        ! compile && return 9
     fi
     # Build Docker services
     if [[ $BUILD_DOCKER -gt 0 ]]; then
-        ! docker_build && return 4
+        ! docker_build && return 10
     fi
     # Display Docker container logs
     if [[ $DISPLAY_LOGS -gt 0 ]]; then
-        ! display_logs && return 9
+        ! display_logs && return 11
     fi
-    return 0
-}
 
-function toto() {
-    echo "hello world"
     return 0
 }
 
@@ -436,10 +344,9 @@ ${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkat
 # @exitcode 2 If task execution failed.
 function main() {
     ARGS=()
-    HELP=0
+    HELP=0 VERBOSE=0 FORCE=0
     INIT=0 START=0 STOP=0 CLEAN=0
-    RELEASE=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0
-    DISPLAY_LOGS=0 VERBOSE=0 FORCE=0
+    RELEASE=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0 DISPLAY_LOGS=0
     # Check options passed as script parameters and execute tasks
     ! check_opts "$@" && return 1
     # Used by unit tests to execute a function
