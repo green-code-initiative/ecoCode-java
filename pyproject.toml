@@ -14,6 +14,9 @@ packages = [{include = "tests/*.py"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
+mkdocs = "^1.5.3"
+mkdocs-material = "^9.5.11"
+mkdocs-include-dir-to-nav = "^1.2.0"
 
 [tool.poetry.group.test]
 [tool.poetry.group.test.dependencies]

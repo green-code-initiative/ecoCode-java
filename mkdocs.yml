@@ -1,0 +1,21 @@
+site_name: ecoCode-java
+repo_url: https://github.com/green-code-initiative/ecoCode-java/
+site_description: todo
+nav:
+  - Home:
+      - toolbox.md
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: purple
+    accent: cyan
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+plugins:
+  - search
+  - include_dir_to_nav:
+      sort_file: true
+      sort_directory: true

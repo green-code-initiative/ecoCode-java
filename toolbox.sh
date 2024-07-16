@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 # @name toolbox.sh
 # @brief **toolbox.sh** is a utility script for installing the SonarQube dev environment.
+# @description
+#   This toolbox enables you to perform the following actions:
+#
+#       * Installing the SonarQube dev environment
+#       * Run unit tests with **pytest**
+#       * Linter the code with the **shellcheck** utility
+#       * Generating the API documentation with the **shdoc** utility
+#       * Generating a site from markdown files with **mkdocs**
 
 # Global variables
 CURRENT_PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+DOC_PATH="$CURRENT_PATH/docs"
 ECOCODE_DC_FILE="$CURRENT_PATH/docker-compose.yml"
 ECOCODE_DOCKER_ENV="$CURRENT_PATH/.default.docker.env"
 ECOCODE_JAVA_PLUGIN_VERSION=$(< "$CURRENT_PATH/pom.xml" grep "<version>"|head -n1|sed 's/<\(\/\)*version>//g'|xargs)
@@ -40,39 +49,6 @@ function debug() {
 # @exitcode 0 If successful.
 function error() {
     echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
-    return 0
-}
-
-# @description Compile and package source code with maven.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered when building source code.
-# @exitcode 2 If the ecoCode plugin in target directory cannot be found.
-function build() {
-    info "Building source code in the target folder"
-    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]] || [[ $FORCE -gt 0 ]]; then
-        debug "mvn clean package -DskipTests"
-        if ! mvn clean package -DskipTests; then
-            return 1
-        fi
-    fi
-    # Check that the plugin is present in the target folder
-    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]]; then
-        error "Cannot find ecoCode plugin in target directory" && return 2
-    fi
-    return 0
-}
-
-# @description Compile source code with maven.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered when compiling the source code.
-function compile() {
-    info "Compile source code"
-    debug "mvn clean compile"
-    if ! mvn clean compile; then
-        return 1
-    fi
     return 0
 }
 
@@ -156,6 +132,28 @@ function docker_down() {
     return 0
 }
 
+# @description Use maven plugin release to prepare locally next release and next SNAPSHOT.
+# @noargs
+# @exitcode 0 If successful.
+function release_prepare() {
+    # creation of 2 commits with release and next SNAPSHOT
+    if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
+        return 1
+    fi
+    sleep 2
+    return 0
+}
+
+# @description Clean temporary files.
+# @noargs
+# @exitcode 0 If successful.
+function release_clean() {
+    if ! mvn release:clean; then
+        return 1
+    fi
+    return 0
+}
+
 # @description Display Docker service logs.
 # @noargs
 # @exitcode 0 If successful.
@@ -212,6 +210,50 @@ function clean() {
     return 0
 }
 
+# @description Use maven plugin to create a new release.
+# @noargs
+# @exitcode 0 If successful.
+# @exitcode 1 If an error is encountered when prepare the release.
+# @exitcode 1 If an error is encountered when cleaning files.
+function release() {
+    ! release_prepare && return 1
+    ! release_clean && return 2
+    return 0
+}
+
+# @description Compile and package source code with maven.
+# @noargs
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered when building source code.
+# @exitcode 2 If the ecoCode plugin in target directory cannot be found.
+function build() {
+    info "Building source code in the target folder"
+    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]] || [[ $FORCE -gt 0 ]]; then
+        debug "mvn clean package -DskipTests"
+        if ! mvn clean package -DskipTests; then
+            return 1
+        fi
+    fi
+    # Check that the plugin is present in the target folder
+    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]]; then
+        error "Cannot find ecoCode plugin in target directory" && return 2
+    fi
+    return 0
+}
+
+# @description Compile source code with maven.
+# @noargs
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered when compiling the source code.
+function compile() {
+    info "Compile source code"
+    debug "mvn clean compile"
+    if ! mvn clean compile; then
+        return 1
+    fi
+    return 0
+}
+
 # @description Display Docker container logs.
 # @noargs
 # @exitcode 0 If successful.
@@ -220,10 +262,39 @@ function display_logs() {
     return 0
 }
 
-# @description Use maven plugin release to prepare locally next release and next SNAPSHOT.
+# @description Run unit tests.
 # @noargs
 # @exitcode 0 If successful.
-function release() {
+function run_tests() {
+    info "Run unit tests"
+    pytest tests/test_*.py
+    return 0
+}
+
+# @description Linter the application's bash code.
+# @noargs
+# @exitcode 0 If successful.
+function lint_bash() {
+    info "Linting bash code"
+    shellcheck -x toolbox.sh
+    return 0
+}
+
+# @description Generate API documentation in markdown format.
+# @noargs
+# @exitcode 0 If successful.
+function generate_bash_doc() {
+    info "Generating the toolbox API documentation"
+    shdoc < "$CURRENT_PATH/toolbox.sh" > "$DOC_PATH/toolbox.md"
+    return 0
+}
+
+# @description Start the mkdocs server to browse the API documentation in a browser.
+# @noargs
+# @exitcode 0 If successful.
+function mkdocs_server_start() {
+    info "Start the mkdocs server"
+    mkdocs serve -a 0.0.0.0:8000
     return 0
 }
 
@@ -238,6 +309,7 @@ function check_opts() {
             start) START=1 ;;
             stop) STOP=1 ;;
             clean) CLEAN=1 ;;
+            release) RELEASE=1 ;;
             build) BUILD=1 ;;
             compile) COMPILE=1 ;;
             build-docker) BUILD_DOCKER=1 ;;
@@ -250,7 +322,7 @@ function check_opts() {
         esac
     done
     # Help is displayed if no option is passed as script parameter
-    if [[ $((HELP+BUILD+COMPILE+BUILD_DOCKER+INIT+START+STOP+CLEAN+DISPLAY_LOGS)) -eq 0 ]]; then
+    if [[ $((HELP+INIT+START+STOP+CLEAN+RELEASE+BUILD+COMPILE+BUILD_DOCKER+DISPLAY_LOGS)) -eq 0 ]]; then
         HELP=1
     fi
     return 0
@@ -286,18 +358,6 @@ function execute_tasks() {
         ! display_help && return 1
         return 0
     fi
-    # Build the ecoCode plugin
-    if [[ $BUILD -gt 0 ]]; then
-        ! build && return 2
-    fi
-    # Compile the ecoCode plugin
-    if [[ $COMPILE -gt 0 ]]; then
-        ! compile && return 3
-    fi
-    # Build Docker services
-    if [[ $BUILD_DOCKER -gt 0 ]]; then
-        ! docker_build && return 4
-    fi
     # Building the ecoCode plugin and creating Docker containers
     if [[ $INIT -gt 0 ]]; then
         ! init && return 5
@@ -313,6 +373,22 @@ function execute_tasks() {
     # Stop and remove containers, networks and volumes
     if [[ $CLEAN -gt 0 ]]; then
         ! clean && return 8
+    fi
+    # Use maven plugin to create a new release
+    if [[ $RELEASE -gt 0 ]]; then
+        ! release && return 2
+    fi
+    # Build the ecoCode plugin
+    if [[ $BUILD -gt 0 ]]; then
+        ! build && return 2
+    fi
+    # Compile the ecoCode plugin
+    if [[ $COMPILE -gt 0 ]]; then
+        ! compile && return 3
+    fi
+    # Build Docker services
+    if [[ $BUILD_DOCKER -gt 0 ]]; then
+        ! docker_build && return 4
     fi
     # Display Docker container logs
     if [[ $DISPLAY_LOGS -gt 0 ]]; then
@@ -338,6 +414,7 @@ ${COLORS[GREEN]}init${COLORS[WHITE]}                Initialize and creating cont
 ${COLORS[GREEN]}start${COLORS[WHITE]}               Starting Docker containers
 ${COLORS[GREEN]}stop${COLORS[WHITE]}                Stopping Docker containers
 ${COLORS[GREEN]}clean${COLORS[WHITE]}               Stop and remove containers, networks and volumes
+${COLORS[GREEN]}release${COLORS[WHITE]}             Create a new release
 ${COLORS[GREEN]}build${COLORS[WHITE]}               Build the ecoCode plugin
 ${COLORS[GREEN]}compile${COLORS[WHITE]}             Compile the ecoCode plugin
 ${COLORS[GREEN]}build-docker${COLORS[WHITE]}        Build Docker services
@@ -358,7 +435,11 @@ ${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkat
 # @exitcode 1 If the options check failed.
 # @exitcode 2 If task execution failed.
 function main() {
-    ARGS=() HELP=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0 INIT=0 START=0 STOP=0 CLEAN=0 DISPLAY_LOGS=0 VERBOSE=0 FORCE=0
+    ARGS=()
+    HELP=0
+    INIT=0 START=0 STOP=0 CLEAN=0
+    RELEASE=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0
+    DISPLAY_LOGS=0 VERBOSE=0 FORCE=0
     # Check options passed as script parameters and execute tasks
     ! check_opts "$@" && return 1
     # Used by unit tests to execute a function
