@@ -179,11 +179,19 @@ function release() {
 
 # @description Create a push and a new branch with commits previously prepared
 # @exitcode 0 If successful.
-# @exitcode 1 If an error is encountered when push the release.
+# @exitcode 1 If the last commit tag does not match the last git tag.
 function release_push() {
-    local last_tag="" branch_name=""
-    # checkout released tag and creation of branch to push (becasue of main protection)
+    local last_tag_prepare="" last_tag="" branch_name=""
+    # Check that the release has been properly prepared
+    last_tag_prepare=$(git log -2 --pretty=%B|grep "prepare release"|awk '{print $NF}')
+    # Retrieve last tag
     last_tag=$(git tag --sort=-version:refname | head -n 1)
+    # Check that the tag is correct
+    if ! [[ "$last_tag_prepare" = "$last_tag" ]]; then
+        error "The last commit tag does not match the last git tag"
+        return 1
+    fi
+    # Checkout released tag and creation of branch to push (because of main protection)
     branch_name="release_${last_tag}"
     git checkout -b "${branch_name}"
     # push branch associated to new tag release
@@ -242,7 +250,7 @@ function check_opts() {
         esac
     done
     # Help is displayed if no option is passed as script parameter
-    if [[ $((HELP+INIT+START+STOP+CLEAN+RELEASE+BUILD+COMPILE+BUILD_DOCKER+DISPLAY_LOGS)) -eq 0 ]]; then
+    if [[ $((HELP+INIT+START+STOP+CLEAN+RELEASE+RELEASE_PUSH+BUILD+COMPILE+BUILD_DOCKER+DISPLAY_LOGS)) -eq 0 ]]; then
         HELP=1
     fi
     return 0
@@ -253,7 +261,7 @@ function execute_function() {
     if ! [[ $(type -t "${ARGS[0]}") == function ]]; then
         error "Function with name ${ARGS[0]} does not exist" && return 1
     fi
-    eval "${ARGS[@]}"
+    "${ARGS[@]}"
     return $?
 }
 

@@ -23,6 +23,7 @@ function docker_run() {
         -p 8000:8000 \
         -v "$(pwd)/toolbox.sh:/app/toolbox.sh" \
         -v "$(pwd)/utils_bash.sh:/app/utils_bash.sh" \
+        -v "$(pwd)/.default.docker.env:/app/.default.docker.env" \
         -v "$(pwd)/mkdocs.yml:/app/mkdocs.yml" \
         -v "$(pwd)/docs:/app/docs" \
         -v "$(pwd)/tests:/app/tests" \

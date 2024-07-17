@@ -53,7 +53,7 @@ function unit_tests() {
 # @exitcode 0 If successful.
 function lint() {
     info "Linting bash code"
-    shellcheck -x toolbox.sh
+    shellcheck -e SC1083 -x toolbox.sh
     return 0
 }
 
