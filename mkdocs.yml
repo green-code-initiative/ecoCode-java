@@ -1,9 +1,10 @@
 site_name: ecoCode-java
 repo_url: https://github.com/green-code-initiative/ecoCode-java/
-site_description: todo
+site_description: Documentation based on ecoCode bash scripts
 nav:
   - Home:
       - toolbox.md
+      - utils_bash.md
 theme:
   name: material
   palette:

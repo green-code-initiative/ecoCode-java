@@ -23,32 +23,25 @@ declare -A COLORS=(
     [NOCOLOR]='\033[0;0m'
 )
 
-# @description Display an information message.
-# @noargs
-# @exitcode 0 If successful.
+# Display an information message.
 function info() {
     echo -e "${COLORS[WHITE]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
-# @description Display an debug message.
-# @noargs
-# @exitcode 0 If successful.
+# Display an debug message.
 function debug() {
     [[ $VERBOSE -gt 0 ]] && echo -e "${COLORS[BLUE]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
-# @description Display an error message.
-# @noargs
-# @exitcode 0 If successful.
+# Display an error message.
 function error() {
     echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
 # @description Run unit tests.
-# @noargs
 # @exitcode 0 If successful.
 function unit_tests() {
     info "Run unit tests"
@@ -57,7 +50,6 @@ function unit_tests() {
 }
 
 # @description Linter the application's bash code.
-# @noargs
 # @exitcode 0 If successful.
 function lint() {
     info "Linting bash code"
@@ -66,16 +58,15 @@ function lint() {
 }
 
 # @description Generate API documentation in markdown format.
-# @noargs
 # @exitcode 0 If successful.
 function generate_doc() {
     info "Generating the toolbox API documentation"
     shdoc < "$CURRENT_PATH/toolbox.sh" > "$DOC_PATH/toolbox.md"
+    shdoc < "$CURRENT_PATH/utils_bash.sh" > "$DOC_PATH/utils_bash.md"
     return 0
 }
 
 # @description Start the mkdocs server to browse the API documentation in a browser.
-# @noargs
 # @exitcode 0 If successful.
 function mkdocs_server_start() {
     info "Start the mkdocs server"
@@ -83,9 +74,26 @@ function mkdocs_server_start() {
     return 0
 }
 
-# @description Check options passed as script parameters.
-# @noargs
+# @description Display help.
 # @exitcode 0 If successful.
+function display_help() {
+    local output=""
+    output="
+${COLORS[YELLOW]}Usage${COLORS[WHITE]} $(basename "$0") [OPTIONS] COMMAND
+${COLORS[YELLOW]}Commands:${COLORS[NOCOLOR]}
+${COLORS[GREEN]}test${COLORS[WHITE]}                Run unit tests
+${COLORS[GREEN]}lint${COLORS[WHITE]}                Linter the application's bash code
+${COLORS[GREEN]}doc${COLORS[WHITE]}                 Generate API documentation
+${COLORS[GREEN]}mkdocs${COLORS[WHITE]}              Start the mkdocs server
+${COLORS[YELLOW]}Options:${COLORS[NOCOLOR]}
+${COLORS[GREEN]}-h, --help${COLORS[WHITE]}          Display help
+${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkative
+    "
+    echo -e "$output\n"|sed '1d; $d'
+    return 0
+}
+
+# Check options passed as script parameters.
 function check_opts() {
     read -ra opts <<< "$@"
     for opt in "${opts[@]}"; do
@@ -106,14 +114,7 @@ function check_opts() {
     return 0
 }
 
-# @description Execute tasks based on script parameters or user actions.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error has been encountered displaying help.
-# @exitcode 2 If an error is encountered when running unit tests.
-# @exitcode 3 If an error is encountered when linter the application's bash code.
-# @exitcode 4 If an error is encountered when generate API documentation.
-# @exitcode 5 If an error is encountered when starting the mkdocs server.
+# Execute tasks based on script parameters or user actions.
 function execute_tasks() {
     # Display help
     if [[ $HELP -gt 0 ]]; then
@@ -139,31 +140,7 @@ function execute_tasks() {
     return 0
 }
 
-# @description Display help.
-# @noargs
-# @exitcode 0 If successful.
-function display_help() {
-    local output=""
-    output="
-${COLORS[YELLOW]}Usage${COLORS[WHITE]} $(basename "$0") [OPTIONS] COMMAND
-${COLORS[YELLOW]}Commands:${COLORS[NOCOLOR]}
-${COLORS[GREEN]}test${COLORS[WHITE]}                Run unit tests
-${COLORS[GREEN]}lint${COLORS[WHITE]}                Linter the application's bash code
-${COLORS[GREEN]}doc${COLORS[WHITE]}                 Generate API documentation
-${COLORS[GREEN]}mkdocs${COLORS[WHITE]}              Start the mkdocs server
-${COLORS[YELLOW]}Options:${COLORS[NOCOLOR]}
-${COLORS[GREEN]}-h, --help${COLORS[WHITE]}          Display help
-${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkative
-    "
-    echo -e "$output\n"|sed '1d; $d'
-    return 0
-}
-
-# @description Main function.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If the options check failed.
-# @exitcode 2 If task execution failed.
+# Main function.
 function main() {
     ARGS=()
     HELP=0 VERBOSE=0

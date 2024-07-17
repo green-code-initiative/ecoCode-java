@@ -21,32 +21,22 @@ declare -A COLORS=(
     [NOCOLOR]='\033[0;0m'
 )
 
-# @description Display an information message.
-# @noargs
-# @exitcode 0 If successful.
 function info() {
     echo -e "${COLORS[WHITE]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
-# @description Display an debug message.
-# @noargs
-# @exitcode 0 If successful.
 function debug() {
     [[ $VERBOSE -gt 0 ]] && echo -e "${COLORS[BLUE]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
-# @description Display an error message.
-# @noargs
-# @exitcode 0 If successful.
 function error() {
     echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
 # @description Export environment variables from .default.docker.env file.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If the environment file cannot be found.
 function docker_env_source() {
@@ -60,7 +50,6 @@ function docker_env_source() {
 }
 
 # @description Build Docker services.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered retrieving environment variables.
 # @exitcode 2 If an error has been encountered when building services.
@@ -73,20 +62,7 @@ function docker_build() {
     return 0
 }
 
-# @description Display Docker service logs.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-function docker_logs() {
-    ! docker_env_source && return 1
-    info "Display Docker container logs"
-    debug "docker compose -f $ECOCODE_DC_FILE logs -f"
-    docker compose -f "$ECOCODE_DC_FILE" logs -f
-    return 0
-}
-
 # @description Building the ecoCode plugin and creating containers.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered when building project code in the target folder.
 # @exitcode 2 If an error was encountered retrieving environment variables.
@@ -101,7 +77,6 @@ function init() {
 }
 
 # @description Starting Docker containers.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If the ecoCode plugin is not present in the target folder.
 # @exitcode 2 If an error was encountered retrieving environment variables.
@@ -119,7 +94,6 @@ function start() {
 }
 
 # @description Stopping Docker containers.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered retrieving environment variables.
 # @exitcode 2 If an error was encountered during container shutdown.
@@ -129,11 +103,9 @@ function stop() {
     debug "docker compose -f $ECOCODE_DC_FILE stop"
     ! docker compose -f "$ECOCODE_DC_FILE" stop && return 2
     return 0
-    return 0
 }
 
 # @description Stop and remove containers, networks and volumes.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered retrieving environment variables.
 # @exitcode 2 If an error was encountered during deletion.
@@ -142,31 +114,22 @@ function clean() {
     info "Remove Docker containers, networks and volumes"
     debug "docker compose -f $ECOCODE_DC_FILE down --volumes"
     ! docker compose -f "$ECOCODE_DC_FILE" down --volumes && return 2
-
     [[ $FORCE -gt 0 ]] && rm -rf "$CURRENT_PATH/target"
     return 0
 }
 
-# @description Use maven plugin release to prepare locally next release and next SNAPSHOT.
-# @noargs
+# @description Display Docker container logs.
 # @exitcode 0 If successful.
-# @exitcode 1 If an error is encountered when prepare the release.
-# @exitcode 2 If an error is encountered when cleaning files.
-function release() {
-    # creation of 2 commits with release and next SNAPSHOT
-    if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
-        return 1
-    fi
-    sleep 2
-    # Clean temporary files
-    if ! mvn release:clean; then
-        return 2
-    fi
+# @exitcode 1 If an error was encountered retrieving environment variables.
+function display_logs() {
+    ! docker_env_source && return 1
+    info "Display Docker container logs"
+    debug "docker compose -f $ECOCODE_DC_FILE logs -f"
+    docker compose -f "$ECOCODE_DC_FILE" logs -f
     return 0
 }
 
 # @description Compile and package source code with maven.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered when building source code.
 # @exitcode 2 If the ecoCode plugin in target directory cannot be found.
@@ -186,7 +149,6 @@ function build() {
 }
 
 # @description Compile source code with maven.
-# @noargs
 # @exitcode 0 If successful.
 # @exitcode 1 If an error was encountered when compiling the source code.
 function compile() {
@@ -198,17 +160,66 @@ function compile() {
     return 0
 }
 
-# @description Display Docker container logs.
-# @noargs
+# @description Use maven plugin release to prepare locally next release and next SNAPSHOT.
 # @exitcode 0 If successful.
-function display_logs() {
-    ! docker_logs && return 1
+# @exitcode 1 If an error is encountered when prepare the release.
+# @exitcode 2 If an error is encountered when cleaning files.
+function release() {
+    # creation of 2 commits with release and next SNAPSHOT
+    if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
+        return 1
+    fi
+    sleep 2
+    # Clean temporary files
+    if ! mvn release:clean; then
+        return 2
+    fi
     return 0
 }
 
-# @description Check options passed as script parameters.
-# @noargs
+# @description Create a push and a new branch with commits previously prepared
 # @exitcode 0 If successful.
+# @exitcode 1 If an error is encountered when push the release.
+function release_push() {
+    local last_tag="" branch_name=""
+    # checkout released tag and creation of branch to push (becasue of main protection)
+    last_tag=$(git tag --sort=-version:refname | head -n 1)
+    branch_name="release_${last_tag}"
+    git checkout -b "${branch_name}"
+    # push branch associated to new tag release
+    git push --set-upstream origin "${branch_name}"
+    return 0
+}
+
+# @description Display help.
+# @exitcode 0 If successful.
+function display_help() {
+    local output=""
+    output="
+${COLORS[YELLOW]}Usage${COLORS[WHITE]} $(basename "$0") [OPTIONS] COMMAND
+${COLORS[YELLOW]}Commands:${COLORS[NOCOLOR]}
+${COLORS[GREEN]}init${COLORS[WHITE]}                Initialize and creating containers
+${COLORS[GREEN]}start${COLORS[WHITE]}               Starting Docker containers
+${COLORS[GREEN]}stop${COLORS[WHITE]}                Stopping Docker containers
+${COLORS[GREEN]}clean${COLORS[WHITE]}               Stop and remove containers, networks and volumes
+${COLORS[GREEN]}build${COLORS[WHITE]}               Build the ecoCode plugin
+${COLORS[GREEN]}compile${COLORS[WHITE]}             Compile the ecoCode plugin
+${COLORS[GREEN]}build-docker${COLORS[WHITE]}        Build Docker services
+${COLORS[GREEN]}release${COLORS[WHITE]}             Create a new release
+${COLORS[GREEN]}release-push${COLORS[WHITE]}        Push the new release
+${COLORS[YELLOW]}Options:${COLORS[NOCOLOR]}
+${COLORS[GREEN]}-l, --logs${COLORS[WHITE]}          Display Docker container logs
+${COLORS[GREEN]}-p, --push${COLORS[WHITE]}          Push the new release
+${COLORS[GREEN]}-f, --force${COLORS[WHITE]}         To delete the target folder or recompile the source code
+${COLORS[GREEN]}--token=<TOKEN>${COLORS[WHITE]}     Creating containers with previously created token
+${COLORS[GREEN]}-h, --help${COLORS[WHITE]}          Display help
+${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkative
+    "
+    echo -e "$output\n"|sed '1d; $d'
+    return 0
+}
+
+# Check options passed as script parameters.
 function check_opts() {
     read -ra opts <<< "$@"
     for opt in "${opts[@]}"; do
@@ -218,6 +229,7 @@ function check_opts() {
             stop) STOP=1 ;;
             clean) CLEAN=1 ;;
             release) RELEASE=1 ;;
+            release-push) RELEASE_PUSH=1 ;;
             build) BUILD=1 ;;
             compile) COMPILE=1 ;;
             build-docker) BUILD_DOCKER=1 ;;
@@ -236,10 +248,7 @@ function check_opts() {
     return 0
 }
 
-# @description Used by unit tests to execute a function.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode >0 If an error has been encountered while executing a function
+# Used by unit tests to execute a function.
 function execute_function() {
     if ! [[ $(type -t "${ARGS[0]}") == function ]]; then
         error "Function with name ${ARGS[0]} does not exist" && return 1
@@ -248,18 +257,7 @@ function execute_function() {
     return $?
 }
 
-# @description Execute tasks based on script parameters or user actions.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If an error has been encountered displaying help.
-# @exitcode 2 If an error is encountered when building the ecoCode plugin.
-# @exitcode 3 If an error is encountered when compiling the ecoCode plugin.
-# @exitcode 4 If an error is encountered when building Docker services.
-# @exitcode 5 If an error was encountered while initialize docker compose.
-# @exitcode 6 If an error is encountered when starting Docker containers.
-# @exitcode 7 If an error is encountered when stopping Docker containers.
-# @exitcode 8 If an error is encountered when cleaning Docker containers.
-# @exitcode 9 If an error is encountered when displaying Docker logs.
+# Execute tasks based on script parameters or user actions.
 function execute_tasks() {
     # Display help
     if [[ $HELP -gt 0 ]]; then
@@ -282,25 +280,25 @@ function execute_tasks() {
     if [[ $CLEAN -gt 0 ]]; then
         ! clean && return 5
     fi
-    # Use maven plugin to create a new release
-    if [[ $RELEASE -gt 0 ]]; then
-        ! release && return 6
-    fi
-    # create an push an new branch with commits previously prepared
-    if [[ $RELEASE_PUSH -gt 0 ]]; then
-        ! release_push && return 7
-    fi
     # Build the ecoCode plugin
     if [[ $BUILD -gt 0 ]]; then
-        ! build && return 8
+        ! build && return 6
     fi
     # Compile the ecoCode plugin
     if [[ $COMPILE -gt 0 ]]; then
-        ! compile && return 9
+        ! compile && return 7
     fi
     # Build Docker services
     if [[ $BUILD_DOCKER -gt 0 ]]; then
-        ! docker_build && return 10
+        ! docker_build && return 8
+    fi
+    # Use maven plugin to create a new release
+    if [[ $RELEASE -gt 0 ]]; then
+        ! release && return 9
+    fi
+    # create an push an new branch with commits previously prepared
+    if [[ $RELEASE_PUSH -gt 0 ]]; then
+        ! release_push && return 10
     fi
     # Display Docker container logs
     if [[ $DISPLAY_LOGS -gt 0 ]]; then
@@ -310,38 +308,7 @@ function execute_tasks() {
     return 0
 }
 
-# @description Display help.
-# @noargs
-# @exitcode 0 If successful.
-function display_help() {
-    local output=""
-    output="
-${COLORS[YELLOW]}Usage${COLORS[WHITE]} $(basename "$0") [OPTIONS] COMMAND
-${COLORS[YELLOW]}Commands:${COLORS[NOCOLOR]}
-${COLORS[GREEN]}init${COLORS[WHITE]}                Initialize and creating containers
-${COLORS[GREEN]}start${COLORS[WHITE]}               Starting Docker containers
-${COLORS[GREEN]}stop${COLORS[WHITE]}                Stopping Docker containers
-${COLORS[GREEN]}clean${COLORS[WHITE]}               Stop and remove containers, networks and volumes
-${COLORS[GREEN]}release${COLORS[WHITE]}             Create a new release
-${COLORS[GREEN]}build${COLORS[WHITE]}               Build the ecoCode plugin
-${COLORS[GREEN]}compile${COLORS[WHITE]}             Compile the ecoCode plugin
-${COLORS[GREEN]}build-docker${COLORS[WHITE]}        Build Docker services
-${COLORS[YELLOW]}Options:${COLORS[NOCOLOR]}
-${COLORS[GREEN]}-l, --logs${COLORS[WHITE]}          Display Docker container logs
-${COLORS[GREEN]}-f, --force${COLORS[WHITE]}         To delete the target folder or recompile the source code
-${COLORS[GREEN]}--token=<TOKEN>${COLORS[WHITE]}     Creating containers with previously created token
-${COLORS[GREEN]}-h, --help${COLORS[WHITE]}          Display help
-${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkative
-    "
-    echo -e "$output\n"|sed '1d; $d'
-    return 0
-}
-
-# @description Main function.
-# @noargs
-# @exitcode 0 If successful.
-# @exitcode 1 If the options check failed.
-# @exitcode 2 If task execution failed.
+# Main function.
 function main() {
     ARGS=()
     HELP=0 VERBOSE=0 FORCE=0
