@@ -1,10 +1,10 @@
 version: "3.3"
 services:
   sonar:
-    image: sonarqube:10.5.1-community
+    image: sonarqube:10.6.0-community
     container_name: sonar_ecocode_java
     ports:
-      - "9000:9000"
+      - ":9000"
     networks:
       - sonarnet
     depends_on:
