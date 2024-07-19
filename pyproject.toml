@@ -21,4 +21,4 @@ mkdocs-include-dir-to-nav = "^1.2.0"
 [tool.poetry.group.test]
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
-pytest-shell = "^0.3.2"
+pytest-shell-utilities = "^1.9.0"

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # @name utils_bash.sh
-# @brief **utils_bash.sh** is a utility script for the toolbox.sh.
 # @description
 #   This utility script enables you to perform the following actions:
 #
@@ -37,7 +36,7 @@ function debug() {
 
 # Display an error message.
 function error() {
-    echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
+    >&2 echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
@@ -61,8 +60,7 @@ function lint() {
 # @exitcode 0 If successful.
 function generate_doc() {
     info "Generating the toolbox API documentation"
-    shdoc < "$CURRENT_PATH/toolbox.sh" > "$DOC_PATH/toolbox.md"
-    shdoc < "$CURRENT_PATH/utils_bash.sh" > "$DOC_PATH/utils_bash.md"
+    shdoc < "$CURRENT_PATH/toolbox.sh" > "$DOC_PATH/index.md"
     return 0
 }
 

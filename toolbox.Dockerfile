@@ -1,4 +1,4 @@
-FROM python:3.12-alpine3.20 as builder
+FROM python:3.12-alpine3.20 AS builder
 
 ENV POETRY_NO_INTERACTION=1 \
   POETRY_VIRTUALENVS_IN_PROJECT=1 \
@@ -9,15 +9,15 @@ ENV POETRY_NO_INTERACTION=1 \
   PYTHONHASHSEED=random \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
   PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.7.1
+  POETRY_VERSION=1.8.3
 
 RUN pip install "poetry==$POETRY_VERSION"
-RUN apk add --update --no-cache gcc libc-dev
+RUN apk add --update --no-cache gcc libc-dev musl-dev linux-headers python3-dev
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --no-ansi
 
-FROM python:3.12-alpine3.20 as runtime
+FROM python:3.12-alpine3.20 AS runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
@@ -32,7 +32,7 @@ RUN make install -C /tmp/shdoc
 
 # Create user
 RUN addgroup -g 1000 app \
-    && adduser -G app -u 1000 app -D
+    && adduser --home /app  -G app -u 1000 app -D
 USER app
 WORKDIR /app
 

@@ -1,7 +1,5 @@
 # toolbox.sh
 
-**toolbox.sh** is a utility script for installing the SonarQube dev environment.
-
 ## Overview
 
 This toolbox enables you to install the SonarQube dev environment.
@@ -127,7 +125,7 @@ Create a push and a new branch with commits previously prepared
 #### Exit codes
 
 * **0**: If successful.
-* **1**: If an error is encountered when push the release.
+* **1**: If the last commit tag does not match the last git tag.
 
 ### display_help
 

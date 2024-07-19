@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # @name toolbox.sh
-# @brief **toolbox.sh** is a utility script for installing the SonarQube dev environment.
 # @description
 #   This toolbox enables you to install the SonarQube dev environment.
 
@@ -32,7 +31,7 @@ function debug() {
 }
 
 function error() {
-    echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
+    >&2 echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
     return 0
 }
 
