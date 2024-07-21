@@ -30,4 +30,19 @@ class IncrementCheckTest {
                 .verifyIssues();
     }
 
+    @Test
+    void incrementCheck_unaryExpressionWithinBinaryExpression_noIssue() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/IncrementCheckBinaryExpression.java")
+                .withCheck(new IncrementCheck())
+                .verifyNoIssues();
+    }
+
+    @Test
+    void incrementCheck_unaryExpressionWithinMethod_noIssue() {
+        CheckVerifier.newVerifier()
+                .onFile("src/test/files/IncrementCheckMethod.java")
+                .withCheck(new IncrementCheck())
+                .verifyNoIssues();
+    }
 }

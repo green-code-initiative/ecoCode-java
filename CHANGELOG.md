@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- EC67: Ignore rule EC67 when i++ is located within a binary expression or as a method parameter
+
 ### Deleted
 
 ## [1.6.2] - 2024-07-21
