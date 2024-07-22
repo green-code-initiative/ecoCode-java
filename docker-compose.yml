@@ -10,11 +10,12 @@ services:
         - SONARQUBE_VERSION=${SONARQUBE_VERSION}
     container_name: sonar_ecocode_java
     ports:
-      - "9000:9000"
+      - ":9000"
     networks:
       - sonarnet
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       SONAR_JDBC_USERNAME: sonar
       SONAR_JDBC_PASSWORD: sonar
@@ -37,6 +38,12 @@ services:
       POSTGRES_PASSWORD: sonar
       POSTGRES_DB: sonarqube
       PGDATA: pg_data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U sonar -d sonarqube" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 
 networks:
   sonarnet:

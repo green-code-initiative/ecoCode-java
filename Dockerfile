@@ -14,3 +14,4 @@ RUN ${ECOCODE_SRC_PATH}/toolbox.sh build
 
 FROM sonarqube:${SONARQUBE_VERSION}
 COPY --from=builder ${ECOCODE_SRC_PATH}/target/ecocode-*.jar ${SONARQUBE_PLUGINS_PATH}
+USER sonarqube
