@@ -1,16 +1,17 @@
-ARG MAVEN_BUILDER=3-openjdk-17-slim
-ARG SONARQUBE_VERSION=10.6.0-community
+# syntax=docker/dockerfile:1
 
-FROM maven:${MAVEN_BUILDER} AS builder
+ARG MAVEN_BUILDER_VERSION
+ARG SONARQUBE_VERSION
+ARG ECOCODE_SRC_PATH=/usr/src/ecocode
+ARG SONARQUBE_PLUGINS_PATH=/opt/sonarqube/extensions/plugins/
 
-COPY . /usr/src/ecocode
+FROM maven:${MAVEN_BUILDER_VERSION} AS builder
 
-WORKDIR /usr/src/ecocode
-COPY src src/
-COPY pom.xml tool_build.sh ./
+COPY . ${ECOCODE_SRC_PATH}
 
-RUN ./tool_build.sh
+WORKDIR ${ECOCODE_SRC_PATH}
+RUN ${ECOCODE_SRC_PATH}/toolbox.sh build
 
 FROM sonarqube:${SONARQUBE_VERSION}
-COPY --from=builder /usr/src/ecocode/target/ecocode-*.jar /opt/sonarqube/extensions/plugins/
+COPY --from=builder ${ECOCODE_SRC_PATH}/target/ecocode-*.jar ${SONARQUBE_PLUGINS_PATH}
 USER sonarqube
