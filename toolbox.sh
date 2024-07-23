@@ -135,8 +135,8 @@ function display_logs() {
 function build() {
     info "Building source code in the target folder"
     if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]] || [[ $FORCE -gt 0 ]]; then
-        debug "mvn clean package -DskipTests"
-        if ! mvn clean package -DskipTests; then
+        debug "mvn clean package -Dmaven.clean.failOnError=false -DskipTests"
+        if ! mvn clean package -Dmaven.clean.failOnError=false -DskipTests; then
             return 1
         fi
     fi

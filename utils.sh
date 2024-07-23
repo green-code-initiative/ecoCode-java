@@ -19,12 +19,19 @@ function docker_build() {
 
 function docker_run() {
     docker run --rm -it \
-        -e ENV=docker \
-        -p 8000:8000 \
+        --name ecocode_java_utils \
+        -u $(id -u):$(getent group docker | cut -d: -f3) \
+        -p :8000 \
+        -v "//var/run/docker.sock:/var/run/docker.sock" \
+        -v "$HOME/.m2:/app/.m2" \
         -v "$(pwd)/toolbox.sh:/app/toolbox.sh" \
         -v "$(pwd)/utils_bash.sh:/app/utils_bash.sh" \
         -v "$(pwd)/.default.docker.env:/app/.default.docker.env" \
+        -v "$(pwd)/docker-compose.yml:/app/docker-compose.yml" \
+        -v "$(pwd)/Dockerfile:/app/Dockerfile" \
         -v "$(pwd)/pom.xml:/app/pom.xml" \
+        -v "$(pwd)/src:/app/src" \
+        -v "$(pwd)/target:/app/target:rw" \
         -v "$(pwd)/pytest.ini:/app/pytest.ini" \
         -v "$(pwd)/mkdocs.yml:/app/mkdocs.yml" \
         -v "$(pwd)/docs:/app/docs" \
