@@ -13,8 +13,8 @@ ENV POETRY_NO_INTERACTION=1 \
   PIP_DEFAULT_TIMEOUT=100 \
   POETRY_VERSION=1.8.3
 
-RUN pip install "poetry==$POETRY_VERSION"
 RUN apk add --update --no-cache gcc libc-dev musl-dev linux-headers python3-dev
+RUN pip install "poetry==$POETRY_VERSION"
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root --no-ansi
