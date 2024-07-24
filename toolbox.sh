@@ -284,7 +284,7 @@ function execute_unit_test() {
         error "No function to execute" && return 1
     fi
     # If a function is passed as the first argument, we check that it exists
-    if [[ -n "${ARGS[0]}" ]] && ! [[ $(type -t "${ARGS[0]}") == function ]]; then
+    if ! [[ $(type -t "${ARGS[0]}") == function ]]; then
         error "Function with name ${ARGS[0]} does not exist" && return 2
     fi
     # Initialize fixtures
