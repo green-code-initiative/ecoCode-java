@@ -71,6 +71,7 @@ jobs:
       - name: Publish image
         id: push
         uses: docker/build-push-action@v4
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
