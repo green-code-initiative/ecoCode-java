@@ -211,5 +211,5 @@ def test_release_push(shell):
 
 def test_display_help(shell):
     ret = shell.run(script, "display_help", "--test")
-    assert len(ret.stdout.splitlines()) == 19
+    assert len(ret.stdout.splitlines()) == 18
     assert ret.returncode == 0

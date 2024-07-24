@@ -237,12 +237,11 @@ $(colors 'G')build-docker$(colors 'W')        Build Docker services
 $(colors 'G')release$(colors 'W')             Create a new release
 $(colors 'G')release-push$(colors 'W')        Push the new release
 $(colors 'Y')Options:$(colors 'N')
-$(colors 'G')-l, --logs$(colors 'W')          Display Docker container logs
-$(colors 'G')-p, --push$(colors 'W')          Push the new release
-$(colors 'G')-f, --force$(colors 'W')         To delete the target folder or recompile the source code
 $(colors 'G')--token=<TOKEN>$(colors 'W')     Creating containers with previously created token
-$(colors 'G')-h, --help$(colors 'W')          Display help
 $(colors 'G')-v, --verbose$(colors 'W')       Make the command more talkative
+$(colors 'G')-l, --logs$(colors 'W')          Display Docker container logs
+$(colors 'G')-f, --force$(colors 'W')         To delete the target folder or recompile the source code
+$(colors 'G')-h, --help$(colors 'W')          Display help
     "
     echo -e "$output\n"|sed '1d; $d'
     return 0
@@ -263,9 +262,9 @@ function check_opts() {
             compile) COMPILE=1 ; ARGS+=("$opt") ;;
             build-docker) BUILD_DOCKER=1 ; ARGS+=("$opt") ;;
             --token=*) ECOCODE_TOKEN=$(echo "$opt"|awk -F= '{print $2}') ;;
-            --logs) DISPLAY_LOGS=1 ;;
-            --verbose) VERBOSE=1 ;;
-            --force) FORCE=1 ;;
+            --verbose|-v) VERBOSE=1 ;;
+            --logs|-l) DISPLAY_LOGS=1 ;;
+            --force|-f) FORCE=1 ;;
             --test) TEST=1 ;;
             --fixture=*) FIXTURE=$(echo "$opt"|awk -F= '{print $2}') ;;
             --help) HELP=1 ;;
