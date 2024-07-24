@@ -6,6 +6,8 @@ This toolbox enables you to install the SonarQube dev environment.
 
 ## Index
 
+* [build](#build)
+* [compile](#compile)
 * [docker_env_source](#dockerenvsource)
 * [docker_build](#dockerbuild)
 * [init](#init)
@@ -13,11 +15,28 @@ This toolbox enables you to install the SonarQube dev environment.
 * [stop](#stop)
 * [clean](#clean)
 * [display_logs](#displaylogs)
-* [build](#build)
-* [compile](#compile)
 * [release](#release)
 * [release_push](#releasepush)
 * [display_help](#displayhelp)
+
+### build
+
+Compile and package source code with maven.
+
+#### Exit codes
+
+* **0**: If successful.
+* **1**: If an error was encountered when building source code.
+* **2**: If the ecoCode plugin in target directory cannot be found.
+
+### compile
+
+Compile source code with maven.
+
+#### Exit codes
+
+* **0**: If successful.
+* **1**: If an error was encountered when compiling the source code.
 
 ### docker_env_source
 
@@ -56,8 +75,8 @@ Starting Docker containers.
 #### Exit codes
 
 * **0**: If successful.
-* **1**: If the ecoCode plugin is not present in the target folder.
-* **2**: If an error was encountered retrieving environment variables.
+* **1**: If an error was encountered retrieving environment variables.
+* **2**: If the ecoCode plugin is not present in the target folder.
 * **3**: If an error was encountered during container startup.
 
 ### stop
@@ -89,25 +108,6 @@ Display Docker container logs.
 * **0**: If successful.
 * **1**: If an error was encountered retrieving environment variables.
 
-### build
-
-Compile and package source code with maven.
-
-#### Exit codes
-
-* **0**: If successful.
-* **1**: If an error was encountered when building source code.
-* **2**: If the ecoCode plugin in target directory cannot be found.
-
-### compile
-
-Compile source code with maven.
-
-#### Exit codes
-
-* **0**: If successful.
-* **1**: If an error was encountered when compiling the source code.
-
 ### release
 
 Use maven plugin release to prepare locally next release and next SNAPSHOT.
@@ -120,7 +120,7 @@ Use maven plugin release to prepare locally next release and next SNAPSHOT.
 
 ### release_push
 
-Create a push and a new branch with commits previously prepared
+Create a push and a new branch with commits previously prepared.
 
 #### Exit codes
 

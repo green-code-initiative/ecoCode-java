@@ -11,120 +11,43 @@ ECOCODE_JAVA_PLUGIN_VERSION=$(< "$CURRENT_PATH/pom.xml" grep "<version>"|head -n
 ECOCODE_JAVA_PLUGIN_JAR="$CURRENT_PATH/target/ecocode-java-plugin-$ECOCODE_JAVA_PLUGIN_VERSION.jar"
 
 # Shell coloring
-declare -A COLORS=(
-    [RED]='\033[0;31m'
-    [GREEN]='\033[0;32m'
-    [YELLOW]='\033[0;33m'
-    [BLUE]='\033[0;34m'
-    [WHITE]='\033[0;37m'
-    [NOCOLOR]='\033[0;0m'
-)
+function colors() {
+    case $1 in
+        'R') echo -e '\033[0;31m' ;; # RED
+        'G') echo -e '\033[0;32m' ;; # GREEN
+        'B') echo -e '\033[0;34m' ;; # BLUE
+        'Y') echo -e '\033[0;33m' ;; # YELLOW
+        'W') echo -e '\033[0;37m' ;; # WHITE
+        'N') echo -e '\033[0;0m' ;; # NOCOLOR
+    esac
+}
 
 function info() {
-    echo -e "${COLORS[WHITE]}$*${COLORS[NOCOLOR]}"
+    if [[ $TEST -gt 0 ]]; then
+        echo "$*"
+    else
+        echo -e "$(colors 'W')$*$(colors 'N')"
+    fi
     return 0
 }
 
 function debug() {
-    [[ $VERBOSE -gt 0 ]] && echo -e "${COLORS[BLUE]}$*${COLORS[NOCOLOR]}"
+    if [[ $((VERBOSE+TEST)) -gt 0 ]]; then
+        if [[ $TEST -gt 0 ]]; then
+            echo "$*"
+        else
+            echo -e "$(colors 'B')$*$(colors 'N')"
+        fi
+    fi
     return 0
 }
 
 function error() {
-    >&2 echo -e "${COLORS[RED]}$*${COLORS[NOCOLOR]}"
-    return 0
-}
-
-# @description Export environment variables from .default.docker.env file.
-# @exitcode 0 If successful.
-# @exitcode 1 If the environment file cannot be found.
-function docker_env_source() {
-    debug "source $ECOCODE_DOCKER_ENV"
-    # To export variables
-    set -a
-    # shellcheck source=.default.docker.env
-    ! source "$ECOCODE_DOCKER_ENV" && error "Cannot find $ECOCODE_DOCKER_ENV" && return 1
-    set +a
-    return 0
-}
-
-# @description Build Docker services.
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error has been encountered when building services.
-function docker_build() {
-    ! docker_env_source && return 1
-    [[ $FORCE -gt 0 ]] && rm -rf "$CURRENT_PATH/target"
-    info "Build Docker services"
-    debug "docker compose -f $ECOCODE_DC_FILE build"
-    ! docker compose -f "$ECOCODE_DC_FILE" build && return 2
-    return 0
-}
-
-# @description Building the ecoCode plugin and creating containers.
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered when building project code in the target folder.
-# @exitcode 2 If an error was encountered retrieving environment variables.
-# @exitcode 3 If an error was encountered during container creating.
-function init() {
-    ! build && return 1
-    ! docker_env_source && return 2
-    info "Creating and starting Docker containers"
-    debug "docker compose -f $ECOCODE_DC_FILE up --build -d"
-    ! docker compose -f "$ECOCODE_DC_FILE" up --build -d && return 3
-    return 0
-}
-
-# @description Starting Docker containers.
-# @exitcode 0 If successful.
-# @exitcode 1 If the ecoCode plugin is not present in the target folder.
-# @exitcode 2 If an error was encountered retrieving environment variables.
-# @exitcode 3 If an error was encountered during container startup.
-function start() {
-    # Check that the plugin is present in the target folder
-    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]]; then
-        error "Cannot find ecoCode plugin in target directory" && return 1
+    if [[ $TEST -gt 0 ]]; then
+        >&2 echo -e "$*"
+    else
+        >&2 echo -e "$(colors 'R')$*$(colors 'N')"
     fi
-    ! docker_env_source && return 2
-    info "Starting Docker containers"
-    debug "docker compose -f $ECOCODE_DC_FILE start"
-    ! TOKEN=$ECOCODE_TOKEN docker compose -f "$ECOCODE_DC_FILE" start && return 3
-    return 0
-}
-
-# @description Stopping Docker containers.
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error was encountered during container shutdown.
-function stop() {
-    ! docker_env_source && return 1
-    info "Stopping Docker containers"
-    debug "docker compose -f $ECOCODE_DC_FILE stop"
-    ! docker compose -f "$ECOCODE_DC_FILE" stop && return 2
-    return 0
-}
-
-# @description Stop and remove containers, networks and volumes.
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-# @exitcode 2 If an error was encountered during deletion.
-function clean() {
-    ! docker_env_source && return 1
-    info "Remove Docker containers, networks and volumes"
-    debug "docker compose -f $ECOCODE_DC_FILE down --volumes"
-    ! docker compose -f "$ECOCODE_DC_FILE" down --volumes && return 2
-    [[ $FORCE -gt 0 ]] && rm -rf "$CURRENT_PATH/target"
-    return 0
-}
-
-# @description Display Docker container logs.
-# @exitcode 0 If successful.
-# @exitcode 1 If an error was encountered retrieving environment variables.
-function display_logs() {
-    ! docker_env_source && return 1
-    info "Display Docker container logs"
-    debug "docker compose -f $ECOCODE_DC_FILE logs -f"
-    docker compose -f "$ECOCODE_DC_FILE" logs -f
     return 0
 }
 
@@ -134,8 +57,8 @@ function display_logs() {
 # @exitcode 2 If the ecoCode plugin in target directory cannot be found.
 function build() {
     info "Building source code in the target folder"
-    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]] || [[ $FORCE -gt 0 ]]; then
-        debug "mvn clean package -Dmaven.clean.failOnError=false -DskipTests"
+    if ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]] || [[ $FORCE -gt 0 ]] || [[ $TEST -gt 0 ]]; then
+        debug "mvn clean package -Dmaven.clean.failOnError=false -DskipTests" ; [[ $TEST -gt 0 ]] && return 0
         if ! mvn clean package -Dmaven.clean.failOnError=false -DskipTests; then
             return 1
         fi
@@ -152,10 +75,103 @@ function build() {
 # @exitcode 1 If an error was encountered when compiling the source code.
 function compile() {
     info "Compile source code"
-    debug "mvn clean compile"
+    debug "mvn clean compile" ; [[ $TEST -gt 0 ]] && return 0
     if ! mvn clean compile; then
         return 1
     fi
+    return 0
+}
+
+# @description Export environment variables from .default.docker.env file.
+# @exitcode 0 If successful.
+# @exitcode 1 If the environment file cannot be found.
+function docker_env_source() {
+    debug "source $ECOCODE_DOCKER_ENV"
+    # To export variables
+    set -a
+    # shellcheck source=.default.docker.env
+    ! source "$ECOCODE_DOCKER_ENV" 2&>/dev/null && error "Cannot find $ECOCODE_DOCKER_ENV" && return 1
+    set +a
+    return 0
+}
+
+# @description Build Docker services.
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+# @exitcode 2 If an error has been encountered when building services.
+function docker_build() {
+    ! docker_env_source && return 1
+    [[ $FORCE -gt 0 ]] && rm -rf "$CURRENT_PATH/target/*"
+    info "Build Docker services"
+    debug "docker compose -f $ECOCODE_DC_FILE build" ; [[ $TEST -gt 0 ]] && return 0
+    ! docker compose -f "$ECOCODE_DC_FILE" build && return 2
+    return 0
+}
+
+# @description Building the ecoCode plugin and creating containers.
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered when building project code in the target folder.
+# @exitcode 2 If an error was encountered retrieving environment variables.
+# @exitcode 3 If an error was encountered during container creating.
+function init() {
+    ! build && return 1
+    ! docker_env_source && return 2
+    info "Creating and starting Docker containers"
+    debug "docker compose -f $ECOCODE_DC_FILE up --build -d" ; [[ $TEST -gt 0 ]] && return 0
+    ! docker compose -f "$ECOCODE_DC_FILE" up --build -d && return 3
+    return 0
+}
+
+# @description Starting Docker containers.
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+# @exitcode 2 If the ecoCode plugin is not present in the target folder.
+# @exitcode 3 If an error was encountered during container startup.
+function start() {
+    ! docker_env_source && return 1
+    # Check that the plugin is present in the target folder
+    if [[ $TEST -eq 0 ]] && ! [[ -f $ECOCODE_JAVA_PLUGIN_JAR ]]; then
+        error "Cannot find ecoCode plugin in target directory" && return 2
+    fi
+    info "Starting Docker containers"
+    debug "docker compose -f $ECOCODE_DC_FILE start" ; [[ $TEST -gt 0 ]] && return 0
+    ! TOKEN=$ECOCODE_TOKEN docker compose -f "$ECOCODE_DC_FILE" start && return 3
+    return 0
+}
+
+# @description Stopping Docker containers.
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+# @exitcode 2 If an error was encountered during container shutdown.
+function stop() {
+    ! docker_env_source && return 1
+    info "Stopping Docker containers"
+    debug "docker compose -f $ECOCODE_DC_FILE stop" ; [[ $TEST -gt 0 ]] && return 0
+    ! docker compose -f "$ECOCODE_DC_FILE" stop && return 2
+    return 0
+}
+
+# @description Stop and remove containers, networks and volumes.
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+# @exitcode 2 If an error was encountered during deletion.
+function clean() {
+    ! docker_env_source && return 1
+    info "Remove Docker containers, networks and volumes"
+    debug "docker compose -f $ECOCODE_DC_FILE down --volumes" ; [[ $TEST -gt 0 ]] && return 0
+    ! docker compose -f "$ECOCODE_DC_FILE" down --volumes && return 2
+    [[ $FORCE -gt 0 ]] && rm -rf "$CURRENT_PATH/target"
+    return 0
+}
+
+# @description Display Docker container logs.
+# @exitcode 0 If successful.
+# @exitcode 1 If an error was encountered retrieving environment variables.
+function display_logs() {
+    ! docker_env_source && return 1
+    info "Display Docker container logs"
+    debug "docker compose -f $ECOCODE_DC_FILE logs -f" ; [[ $TEST -gt 0 ]] && return 0
+    docker compose -f "$ECOCODE_DC_FILE" logs -f
     return 0
 }
 
@@ -164,22 +180,28 @@ function compile() {
 # @exitcode 1 If an error is encountered when prepare the release.
 # @exitcode 2 If an error is encountered when cleaning files.
 function release() {
-    # creation of 2 commits with release and next SNAPSHOT
-    if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
-        return 1
+    info "Creation of 2 commits with release and next SNAPSHOT"
+    debug "mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}"
+    if [[ $TEST -eq 0 ]]; then
+        if ! mvn release:prepare -B -ff -DpushChanges=false -DtagNameFormat=@{project.version}; then
+            return 1
+        fi
     fi
+    info "Clean temporary files"
+    debug "mvn release:clean" ; [[ $TEST -gt 0 ]] && return 0
     sleep 2
-    # Clean temporary files
     if ! mvn release:clean; then
         return 2
     fi
     return 0
 }
 
-# @description Create a push and a new branch with commits previously prepared
+# @description Create a push and a new branch with commits previously prepared.
 # @exitcode 0 If successful.
 # @exitcode 1 If the last commit tag does not match the last git tag.
 function release_push() {
+    info "Create a push and a new branch with commits previously prepared"
+    [[ $TEST -gt 0 ]] && return 0
     local last_tag_prepare="" last_tag="" branch_name=""
     # Check that the release has been properly prepared
     last_tag_prepare=$(git log -2 --pretty=%B|grep "prepare release"|awk '{print $NF}')
@@ -203,24 +225,24 @@ function release_push() {
 function display_help() {
     local output=""
     output="
-${COLORS[YELLOW]}Usage${COLORS[WHITE]} $(basename "$0") [OPTIONS] COMMAND
-${COLORS[YELLOW]}Commands:${COLORS[NOCOLOR]}
-${COLORS[GREEN]}init${COLORS[WHITE]}                Initialize and creating containers
-${COLORS[GREEN]}start${COLORS[WHITE]}               Starting Docker containers
-${COLORS[GREEN]}stop${COLORS[WHITE]}                Stopping Docker containers
-${COLORS[GREEN]}clean${COLORS[WHITE]}               Stop and remove containers, networks and volumes
-${COLORS[GREEN]}build${COLORS[WHITE]}               Build the ecoCode plugin
-${COLORS[GREEN]}compile${COLORS[WHITE]}             Compile the ecoCode plugin
-${COLORS[GREEN]}build-docker${COLORS[WHITE]}        Build Docker services
-${COLORS[GREEN]}release${COLORS[WHITE]}             Create a new release
-${COLORS[GREEN]}release-push${COLORS[WHITE]}        Push the new release
-${COLORS[YELLOW]}Options:${COLORS[NOCOLOR]}
-${COLORS[GREEN]}-l, --logs${COLORS[WHITE]}          Display Docker container logs
-${COLORS[GREEN]}-p, --push${COLORS[WHITE]}          Push the new release
-${COLORS[GREEN]}-f, --force${COLORS[WHITE]}         To delete the target folder or recompile the source code
-${COLORS[GREEN]}--token=<TOKEN>${COLORS[WHITE]}     Creating containers with previously created token
-${COLORS[GREEN]}-h, --help${COLORS[WHITE]}          Display help
-${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkative
+$(colors 'Y')Usage$(colors 'W') $(basename "$0") [OPTIONS] COMMAND
+$(colors 'Y')Commands:$(colors 'N')
+$(colors 'G')init$(colors 'W')                Initialize and creating containers
+$(colors 'G')start$(colors 'W')               Starting Docker containers
+$(colors 'G')stop$(colors 'W')                Stopping Docker containers
+$(colors 'G')clean$(colors 'W')               Stop and remove containers, networks and volumes
+$(colors 'G')uild$(colors 'W')                Build the ecoCode plugin
+$(colors 'G')compile$(colors 'W')             Compile the ecoCode plugin
+$(colors 'G')build-docker$(colors 'W')        Build Docker services
+$(colors 'G')release$(colors 'W')             Create a new release
+$(colors 'G')release-push$(colors 'W')        Push the new release
+$(colors 'Y')Options:$(colors 'N')
+$(colors 'G')-l, --logs$(colors 'W')          Display Docker container logs
+$(colors 'G')-p, --push$(colors 'W')          Push the new release
+$(colors 'G')-f, --force$(colors 'W')         To delete the target folder or recompile the source code
+$(colors 'G')--token=<TOKEN>$(colors 'W')     Creating containers with previously created token
+$(colors 'G')-h, --help$(colors 'W')          Display help
+$(colors 'G')-v, --verbose$(colors 'W')       Make the command more talkative
     "
     echo -e "$output\n"|sed '1d; $d'
     return 0
@@ -231,19 +253,21 @@ function check_opts() {
     read -ra opts <<< "$@"
     for opt in "${opts[@]}"; do
         case "$opt" in
-            init) INIT=1 ;;
-            start) START=1 ;;
-            stop) STOP=1 ;;
-            clean) CLEAN=1 ;;
-            release) RELEASE=1 ;;
-            release-push) RELEASE_PUSH=1 ;;
-            build) BUILD=1 ;;
-            compile) COMPILE=1 ;;
-            build-docker) BUILD_DOCKER=1 ;;
+            init) INIT=1 ; ARGS+=("$opt") ;;
+            start) START=1 ; ARGS+=("$opt") ;;
+            stop) STOP=1 ; ARGS+=("$opt") ;;
+            clean) CLEAN=1 ; ARGS+=("$opt") ;;
+            release) RELEASE=1 ; ARGS+=("$opt") ;;
+            release-push) RELEASE_PUSH=1 ; ARGS+=("$opt") ;;
+            build) BUILD=1 ; ARGS+=("$opt") ;;
+            compile) COMPILE=1 ; ARGS+=("$opt") ;;
+            build-docker) BUILD_DOCKER=1 ; ARGS+=("$opt") ;;
             --token=*) ECOCODE_TOKEN=$(echo "$opt"|awk -F= '{print $2}') ;;
             --logs) DISPLAY_LOGS=1 ;;
             --verbose) VERBOSE=1 ;;
             --force) FORCE=1 ;;
+            --test) TEST=1 ;;
+            --fixture=*) FIXTURE=$(echo "$opt"|awk -F= '{print $2}') ;;
             --help) HELP=1 ;;
             *) ARGS+=("$opt") ;;
         esac
@@ -256,10 +280,17 @@ function check_opts() {
 }
 
 # Used by unit tests to execute a function.
-function execute_function() {
-    if ! [[ $(type -t "${ARGS[0]}") == function ]]; then
-        error "Function with name ${ARGS[0]} does not exist" && return 1
+function execute_unit_test() {
+    if [[ -z "${ARGS[0]}" ]]; then
+        error "No function to execute" && return 1
     fi
+    # If a function is passed as the first argument, we check that it exists
+    if [[ -n "${ARGS[0]}" ]] && ! [[ $(type -t "${ARGS[0]}") == function ]]; then
+        error "Function with name ${ARGS[0]} does not exist" && return 2
+    fi
+    # Initialize fixtures
+    [[ $FIXTURE -eq 1 ]] && ECOCODE_DOCKER_ENV="test_docker_env"
+    # execute function
     "${ARGS[@]}"
     return $?
 }
@@ -311,25 +342,24 @@ function execute_tasks() {
     if [[ $DISPLAY_LOGS -gt 0 ]]; then
         ! display_logs && return 11
     fi
-
     return 0
 }
 
 # Main function.
 function main() {
     ARGS=()
-    HELP=0 VERBOSE=0 FORCE=0
+    HELP=0 VERBOSE=0 FORCE=0 TEST=0 FIXTURE=0
     INIT=0 START=0 STOP=0 CLEAN=0
     RELEASE=0 BUILD=0 COMPILE=0 BUILD_DOCKER=0 DISPLAY_LOGS=0
     # Check options passed as script parameters and execute tasks
     ! check_opts "$@" && return 1
     # Used by unit tests to execute a function
-    if [[ -n "${ARGS[0]}" ]]; then
-        execute_function
+    if [[ $TEST -gt 0 ]]; then
+        execute_unit_test
         return $?
     fi
     # Execute one or more tasks according to script parameters
-    ! execute_tasks && return 2
+    ! execute_tasks && return $?
     return 0
 }
 

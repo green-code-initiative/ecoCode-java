@@ -64,14 +64,6 @@ function generate_doc() {
     return 0
 }
 
-# @description Start the mkdocs server to browse the API documentation in a browser.
-# @exitcode 0 If successful.
-function mkdocs_server_start() {
-    info "Start the mkdocs server"
-    mkdocs serve -a 0.0.0.0:8000
-    return 0
-}
-
 # @description Display help.
 # @exitcode 0 If successful.
 function display_help() {
@@ -82,7 +74,6 @@ ${COLORS[YELLOW]}Commands:${COLORS[NOCOLOR]}
 ${COLORS[GREEN]}test${COLORS[WHITE]}                Run unit tests
 ${COLORS[GREEN]}lint${COLORS[WHITE]}                Linter the application's bash code
 ${COLORS[GREEN]}doc${COLORS[WHITE]}                 Generate API documentation
-${COLORS[GREEN]}mkdocs${COLORS[WHITE]}              Start the mkdocs server
 ${COLORS[YELLOW]}Options:${COLORS[NOCOLOR]}
 ${COLORS[GREEN]}-h, --help${COLORS[WHITE]}          Display help
 ${COLORS[GREEN]}-v, --verbose${COLORS[WHITE]}       Make the command more talkative
@@ -99,14 +90,13 @@ function check_opts() {
             test) UNIT_TEST=1 ;;
             lint) LINT=1 ;;
             doc) GENERATE_DOC=1 ;;
-            mkdocs) MKDOCS=1 ;;
             --verbose) VERBOSE=1 ;;
             --help) HELP=1 ;;
             *) ARGS+=("$opt") ;;
         esac
     done
     # Help is displayed if no option is passed as script parameter
-    if [[ $((HELP+UNIT_TEST+LINT+GENERATE_DOC+MKDOCS)) -eq 0 ]]; then
+    if [[ $((HELP+UNIT_TEST+LINT+GENERATE_DOC)) -eq 0 ]]; then
         HELP=1
     fi
     return 0
@@ -131,10 +121,6 @@ function execute_tasks() {
     if [[ $GENERATE_DOC -gt 0 ]]; then
         ! generate_doc && return 4
     fi
-    # Start the mkdocs server to browse the API documentation in a browser
-    if [[ $MKDOCS -gt 0 ]]; then
-        ! mkdocs_server_start && return 5
-    fi
     return 0
 }
 
@@ -142,7 +128,7 @@ function execute_tasks() {
 function main() {
     ARGS=()
     HELP=0 VERBOSE=0
-    UNIT_TEST=0 LINT=0 GENERATE_DOC=0 MKDOCS=0
+    UNIT_TEST=0 LINT=0 GENERATE_DOC=0
     # Check options passed as script parameters and execute tasks
     ! check_opts "$@" && return 1
     # Execute one or more tasks according to script parameters
