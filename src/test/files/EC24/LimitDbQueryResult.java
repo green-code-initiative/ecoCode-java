@@ -17,20 +17,51 @@
  */
 class LimitDbQueryResult {
 
-    public void literalSQLrequest() {
+    public void callLiteralSQLString() {
         dummyCall("SELECT user FROM myTable"); // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
+        dummyCall("SELECT user " + " FROM myTable"); // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
         dummyCall("SELECT user FROM myTable LIMIT 50"); // Compliant
         dummyCall("SELECT user FROM myTable WHERE user.name = 'titi'"); // Compliant
     }
 
-    @Query("select t from Todo t") // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
-    @Query("select t from Todo t where t.status != 'COMPLETED'") // Compliant
-    @Query("select t from Todo t where t.status != 'COMPLETED' LIMIT 25") // Compliant
-
-    private void callQuery() {
+    private void buildAndCallQuery() {
         String sql1 = "SELECT user FROM myTable"; // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
         String sql2 = "SELECT user FROM myTable LIMIT 50"; // Compliant
         String sql3 = "SELECT user FROM myTable WHERE user.name = 'titi'"; // Compliant
+        String sql4 = "SELECT user"; // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
+        sql4 += "FROM myTable"; // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
+
+        dummyCall(sql1);
+        dummyCall(sql2);
+        dummyCall(sql3);
+        dummyCall(sql4);
+    }
+
+    private void callQueryWithReturn() {
+        String sql1 = "SELECT user FROM myTable"; // Compliant (more exactly, not controlled and not issued because string returned)
+        dumyCall("");
+        return sql1;
+    }
+
+    private void callQueryWithReturn() {
+        String sql1 = "SELECT user FROM myTable"; // Compliant (more exactly, not controlled and not issued because string returned)
+        return sql1;
+    }
+
+    private void callQueryWithReturn2() {
+        return "SELECT user FROM myTable"; // Compliant (more exactly, not controlled and not issued because string returned)
+    }
+
+    private void callQueryWithReturn3() {
+        String sql2 = "SELECT user"; // Compliant (more exactly, not controlled and not issued because string returned)
+        sql2 += "FROM myTable"; // Compliant (more exactly, not controlled and not issued because string returned)
+        return sql2;
+    }
+
+    private void callQueryWithInput(String sqlInit) {
+        String sql1 = "SELECT user FROM myTable"; // Compliant (more exactly, not controlled and not issued because input string used)
+        sql1 += sqlInit;
+        dummyCall(sql1);
     }
 
     private void dummyCall(String request) {
