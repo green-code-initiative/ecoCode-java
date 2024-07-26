@@ -22,7 +22,7 @@ import org.sonar.java.checks.verifier.CheckVerifier;
 
 class AvoidGettingSizeCollectionInLoopTest {
     @Test
-    public void testBadForLoop() {
+    void testBadForLoop() {
         CheckVerifier.newVerifier()
                 .onFile("src/test/files/AvoidGettingSizeCollectionInForLoopBad.java")
                 .withCheck(new AvoidGettingSizeCollectionInLoop())
