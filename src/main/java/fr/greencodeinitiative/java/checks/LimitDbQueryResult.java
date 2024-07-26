@@ -22,40 +22,29 @@ import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.tree.LiteralTree;
 import org.sonar.plugins.java.api.tree.Tree;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
-import static java.util.Collections.singletonList;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 
 @Rule(key = "EC24")
-public class OptimizeSQLQueriesWithLimit extends IssuableSubscriptionVisitor {
+public class LimitDbQueryResult extends IssuableSubscriptionVisitor {
 
-    public static final String MESSAGE_RULE = "Optimize Database SQL Queries (Clause LIMIT / WHERE)";
-    private static final Predicate<String> LIMIT_REGEXP =
-            compile("limit", CASE_INSENSITIVE).asPredicate();
-    private static final Predicate<String> SELECT_REGEXP =
-            compile("select", CASE_INSENSITIVE).asPredicate();
-    private static final Predicate<String> FROM_REGEXP =
-            compile("from", CASE_INSENSITIVE).asPredicate();
-    private static final Predicate<String> WHERE_REGEXP =
-            compile("where", CASE_INSENSITIVE).asPredicate();
+    protected static final String MESSAGE_RULE = "Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)";
+
+    private static final Pattern PATTERN = Pattern.compile("(LIMIT|TOP|ROW_NUMBER|FETCH FIRST|WHERE)", Pattern.CASE_INSENSITIVE);
 
     @Override
     public List<Tree.Kind> nodesToVisit() {
-        return singletonList(Tree.Kind.STRING_LITERAL);
+        return Collections.singletonList(Tree.Kind.STRING_LITERAL);
     }
 
     @Override
     public void visitNode(Tree tree) {
-        String value = ((LiteralTree) tree).value();
-        if (SELECT_REGEXP.test(value)
-            && FROM_REGEXP.test(value)
-            && !LIMIT_REGEXP.test(value)
-            && !WHERE_REGEXP.test(value)
-            ) {
-                reportIssue(tree, MESSAGE_RULE);
+        String value = ((LiteralTree) tree).value().toUpperCase();
+        if (value.contains("SELECT") && value.contains("FROM") && !PATTERN.matcher(value).find()) {
+            reportIssue(tree, MESSAGE_RULE);
         }
     }
 

@@ -49,7 +49,7 @@ public class JavaCheckRegistrar implements CheckRegistrar {
             AvoidSetConstantInBatchUpdate.class,
             FreeResourcesOfAutoCloseableInterface.class,
             AvoidMultipleIfElseStatement.class,
-            OptimizeSQLQueriesWithLimit.class
+            LimitDbQueryResult.class
     );
 
     /**

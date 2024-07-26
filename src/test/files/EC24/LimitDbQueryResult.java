@@ -15,20 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-class OptimizeSQLQueriesWithLimit {
+class LimitDbQueryResult {
 
     public void literalSQLrequest() {
-        dummyCall("SELECT user FROM myTable"); // Noncompliant {{Optimize Database SQL Queries (Clause LIMIT / WHERE)}}
+        dummyCall("SELECT user FROM myTable"); // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
         dummyCall("SELECT user FROM myTable LIMIT 50"); // Compliant
         dummyCall("SELECT user FROM myTable WHERE user.name = 'titi'"); // Compliant
     }
 
-    @Query("select t from Todo t") // Noncompliant {{Optimize Database SQL Queries (Clause LIMIT / WHERE)}}
+    @Query("select t from Todo t") // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
     @Query("select t from Todo t where t.status != 'COMPLETED'") // Compliant
     @Query("select t from Todo t where t.status != 'COMPLETED' LIMIT 25") // Compliant
 
     private void callQuery() {
-        String sql1 = "SELECT user FROM myTable"; // Noncompliant {{Optimize Database SQL Queries (Clause LIMIT / WHERE)}}
+        String sql1 = "SELECT user FROM myTable"; // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
         String sql2 = "SELECT user FROM myTable LIMIT 50"; // Compliant
         String sql3 = "SELECT user FROM myTable WHERE user.name = 'titi'"; // Compliant
     }
