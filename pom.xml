@@ -67,7 +67,7 @@
         <google.re2j>1.7</google.re2j>
 
         <!-- temporary version waiting for real automatic release in ecocode repository -->
-        <ecocode-rules-specifications.version>1.6.2</ecocode-rules-specifications.version>
+        <ecocode-rules-specifications.version>1.6.3</ecocode-rules-specifications.version>
 
     </properties>
 

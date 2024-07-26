@@ -15,25 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.greencodeinitiative.java;
+interface LimitDbQueryResultInterface {
 
-import org.junit.jupiter.api.Test;
-import org.sonar.plugins.java.api.CheckRegistrar;
+    @Query("select t from Todo t") // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
+    List<Todo> getTodo();
 
-import static org.assertj.core.api.Assertions.assertThat;
+    @Query("select t " + "from Todo t") // Noncompliant {{Try and limit the number of data returned for a single query (by using the LIMIT keyword for example)}}
+    List<Todo> getTodo2();
 
-class JavaCheckRegistrarTest {
+    @Query("select t from Todo t where t.status != 'COMPLETED'") // Compliant
+    List<Todo> getTodoNotCompleted();
 
-    @Test
-    void checkNumberRules() {
-        final CheckRegistrar.RegistrarContext context = new CheckRegistrar.RegistrarContext();
-
-        final JavaCheckRegistrar registrar = new JavaCheckRegistrar();
-        registrar.register(context);
-
-        assertThat(context.checkClasses()).hasSize(16);
-        assertThat(context.testCheckClasses()).isEmpty();
-
-    }
+    @Query("select t from Todo t where t.status != 'COMPLETED' LIMIT 25") // Compliant
+    List<Todo> getTodoNotCompletedLimit25();
 
 }
