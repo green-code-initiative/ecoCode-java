@@ -31,7 +31,7 @@ public class JavaRulesDefinition implements RulesDefinition {
     private static final String RESOURCE_BASE_PATH = "io/ecocode/rules/java";
 
     private static final String NAME = "ecoCode";
-    private static final String LANGUAGE = "java";
+    static final String LANGUAGE = "java";
     static final String REPOSITORY_KEY = "ecocode-java";
 
     private final SonarRuntime sonarRuntime;
