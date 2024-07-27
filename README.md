@@ -65,7 +65,7 @@ Ready to use binaries are available [from GitHub](https://github.com/green-code-
 
 | Plugin version | SonarQube version   | Java version |
 |----------------|---------------------|--------------|
-| 1.5.+          | 9.4.+ LTS to 10.5.1 | 11 / 17      |
+| 1.6.+          | 9.4.+ LTS to 10.6.0 | 11 / 17      |
 
 > Compatibility table of versions lower than 1.4.+ are available from the
 > main [ecoCode repository](https://github.com/green-code-initiative/ecoCode#-plugins-version-compatibility).
