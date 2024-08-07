@@ -51,7 +51,7 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
     private static final MethodMatchers SQL_STATEMENT_DECLARE_SQL = MethodMatchers.create()
             .ofSubTypes(JAVA_SQL_STATEMENT)
             // TODO : also take into account addBatch and executeBatch
-            .names("executeQuery", "execute", "executeUpdate", "executeLargeUpdate")
+            .names("executeQuery", "execute")
             .addParametersMatcher("java.lang.String")
             .build();
     private static final MethodMatchers SQL_STATEMENT_RETRIEVE_RESULTSET = MethodMatchers.create()
