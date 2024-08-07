@@ -50,7 +50,6 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
     private static final String JAVA_SQL_RESULTSET = "java.sql.ResultSet";
     private static final MethodMatchers SQL_STATEMENT_DECLARE_SQL = MethodMatchers.create()
             .ofSubTypes(JAVA_SQL_STATEMENT)
-            // TODO : also take into account addBatch and executeBatch
             .names("executeQuery", "execute")
             .addParametersMatcher("java.lang.String")
             .build();
@@ -82,20 +81,56 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
         return Arrays.asList(Kind.METHOD_INVOCATION);
     }
 
+    /**
+     * How this rule works : 
+     * We start from the method invocation that declares the SQL query ( stmt.executeQuery("SELECT ... FROM ...") )
+     * the selected columns are directly extracted from the parameters of this method invocation
+     * We explore the stmt object to find where the method invocation that returns the ResultSet object
+     * finally we explore all invocations of this ResultSet object to list all the column used.
+     * the selected and used columns are compared, and an issue is reported if columns are selected but not used.
+     * 
+     * 
+     *               stmt.execute("SELECT ... FROM ...") or stmt.executeQuery(...)
+     *                |                    |
+     *                |                    ----> Selected Columns
+     *          [Statement Object]
+     *                |
+     *                |
+     *                v
+     *         res = stmt.getResultSet() or stmt.executeQuery(...)
+     *          |
+     *          |
+     *  [ResultSet Object]
+     *          |
+     *          |
+     *          v
+     *         res.getInt(...) or any column extraction method
+     *                     |
+     *                     ----> Used Column
+     * 
+     */
     @Override
     public void visitNode(Tree tree) {
         MethodInvocationTree methodInvocationTree = (MethodInvocationTree) tree;
         if (!SQL_STATEMENT_DECLARE_SQL.matches(methodInvocationTree)) {
             return;
         }
+
+        // extraction of the selected columns
         List<String> selectedColumns = getSelectedColumns(methodInvocationTree);
         if (selectedColumns.isEmpty()) {
             return;
         }
+
+        // extraction of the used columns
         List<String> usedColumns = getUsedColumns(methodInvocationTree, selectedColumns);
         if (usedColumns == null) {
+            // usedColumns is an empty List when there is no ResultSet or it is never read from
+            // usedColumns is null when the ResultSet was redefined or passed in a method.
             return;
         }
+
+        // if there are selected columns that are not used in the code, report the issue
         List<String> differences = selectedColumns.stream()
                 .filter(element -> !usedColumns.contains(element))
                 .collect(Collectors.toList());
@@ -121,7 +156,10 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
     @Nullable
     private static List<String> getUsedColumns(MethodInvocationTree methodInvocationTree, List<String> selectedColumns) {
         Symbol resultSet = getResultSetNode(methodInvocationTree);
-        if (resultSet == null || isResultSetInvalid(resultSet)) {
+        if (resultSet == null) {
+            return new ArrayList<>()
+        }
+        if(isResultSetInvalid(resultSet)){
             return null;
         }
         List<String> usedColumns = new ArrayList<>();
