@@ -4,7 +4,7 @@
 
     <groupId>io.ecocode</groupId>
     <artifactId>ecocode-java-plugin</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.3-SNAPSHOT</version>
     
     <packaging>sonar-plugin</packaging>
 
@@ -67,7 +67,7 @@
         <google.re2j>1.7</google.re2j>
 
         <!-- temporary version waiting for real automatic release in ecocode repository -->
-        <ecocode-rules-specifications.version>1.5.1</ecocode-rules-specifications.version>
+        <ecocode-rules-specifications.version>1.6.2</ecocode-rules-specifications.version>
 
     </properties>
 
@@ -136,6 +136,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.10.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

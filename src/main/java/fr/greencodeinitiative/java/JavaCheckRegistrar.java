@@ -47,7 +47,7 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
  */
 @SonarLintSide
 public class JavaCheckRegistrar implements CheckRegistrar {
-    private static final List<Class<? extends JavaCheck>> ANNOTATED_RULE_CLASSES = List.of(
+    static final List<Class<? extends JavaCheck>> ANNOTATED_RULE_CLASSES = List.of(
             ArrayCopyCheck.class,
             IncrementCheck.class,
             AvoidUsageOfStaticCollections.class,
