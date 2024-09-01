@@ -1,5 +1,6 @@
 # Ignore all files and folders starting with ".", except a few exceptions
 .*
+!.mvn/
 !.gitignore
 !.gitattributes
 !.github/
