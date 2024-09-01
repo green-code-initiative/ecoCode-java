@@ -28,29 +28,29 @@ import org.sonarsource.analyzer.commons.RuleMetadataLoader;
  * That allows to list the rules in the page "Rules".
  */
 public class JavaRulesDefinition implements RulesDefinition {
-    private static final String RESOURCE_BASE_PATH = "io/ecocode/rules/java";
+	private static final String RESOURCE_BASE_PATH = "io/ecocode/rules/java";
 
-    private static final String NAME = "ecoCode";
-    private static final String LANGUAGE = "java";
-    static final String REPOSITORY_KEY = "ecocode-java";
+	private static final String NAME = "ecoCode";
+	static final String LANGUAGE = "java";
+	static final String REPOSITORY_KEY = "ecocode-java";
 
-    private final SonarRuntime sonarRuntime;
+	private final SonarRuntime sonarRuntime;
 
-    public JavaRulesDefinition(SonarRuntime sonarRuntime) {
-        this.sonarRuntime = sonarRuntime;
-    }
+	public JavaRulesDefinition(SonarRuntime sonarRuntime) {
+		this.sonarRuntime = sonarRuntime;
+	}
 
-    @Override
-    public void define(Context context) {
-        NewRepository repository = context.createRepository(REPOSITORY_KEY, LANGUAGE).setName(NAME);
+	@Override
+	public void define(Context context) {
+		NewRepository repository = context.createRepository(REPOSITORY_KEY, LANGUAGE).setName(NAME);
 
-        RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_BASE_PATH, sonarRuntime);
+		RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_BASE_PATH, sonarRuntime);
 
-        ruleMetadataLoader.addRulesByAnnotatedClass(repository, new ArrayList<>(JavaCheckRegistrar.checkClasses()));
-        repository.done();
-    }
+		ruleMetadataLoader.addRulesByAnnotatedClass(repository, new ArrayList<>(JavaCheckRegistrar.checkClasses()));
+		repository.done();
+	}
 
-    public String repositoryKey() {
-        return REPOSITORY_KEY;
-    }
+	public String repositoryKey() {
+		return REPOSITORY_KEY;
+	}
 }
