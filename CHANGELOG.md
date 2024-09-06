@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [#49](https://github.com/green-code-initiative/ecoCode-java/pull/49) Add test to ensure all Rules are registered
-- [green-code-initiative/ecoCode#336](https://github.com/green-code-initiative/ecoCode/issues/336) [Adds Maven Wrapper](https://github.com/green-code-initiative/ecoCode-java/pull/67)
+- [#336](https://github.com/green-code-initiative/ecoCode/issues/336) [Adds Maven Wrapper](https://github.com/green-code-initiative/ecoCode-java/pull/67)
 
 ### Deleted
 
