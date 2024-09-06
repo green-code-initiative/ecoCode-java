@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#59](https://github.com/green-code-initiative/ecoCode-java/pull/59) Add builtin profile `ecoCode way` to aggregate all implemented ecoCode rules by this plugin
+
 ### Changed
 
 - [#49](https://github.com/green-code-initiative/ecoCode-java/pull/49) Add test to ensure all Rules are registered
+- [#336](https://github.com/green-code-initiative/ecoCode/issues/336) [Adds Maven Wrapper](https://github.com/green-code-initiative/ecoCode-java/pull/67)
 
 ### Deleted
 
