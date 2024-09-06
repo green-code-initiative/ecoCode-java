@@ -1,0 +1,21 @@
+{
+  "name": "ecoCode way",
+  "language": "java",
+  "ruleKeys": [
+	"EC1",
+	"EC2",
+	"EC3",
+	"EC5",
+	"EC27",
+	"EC28",
+	"EC32",
+	"EC67",
+	"EC69",
+	"EC72",
+	"EC74",
+	"EC76",
+	"EC77",
+	"EC78",
+	"EC79"
+  ]
+}
