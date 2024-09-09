@@ -60,18 +60,12 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
             .build();
     private static final MethodMatchers SQL_RESULTSET_GET_COLNAME = MethodMatchers.create()
             .ofSubTypes(JAVA_SQL_RESULTSET)
-            .names("getInt", "getString", "getLong", "getDouble", "getFloat", "getBoolean", "getByte", "getShort",
-                    "getBigDecimal", "getTimestamp", "getDate", "getTime", "getObject", "getArray", "getBlob",
-                    "getClob", "getRef", "getRowId", "getNClob", "getSQLXML", "getURL", "getNString",
-                    "getNCharacterStream", "getCharacterStream", "getAsciiStream", "getBinaryStream")
+            .name(n -> n.startsWith("get"))
             .addParametersMatcher("java.lang.String")
             .build();
     private static final MethodMatchers SQL_RESULTSET_GET_COLID = MethodMatchers.create()
             .ofSubTypes(JAVA_SQL_RESULTSET)
-            .names("getInt", "getString", "getLong", "getDouble", "getFloat", "getBoolean", "getByte", "getShort",
-                    "getBigDecimal", "getTimestamp", "getDate", "getTime", "getObject", "getArray", "getBlob",
-                    "getClob", "getRef", "getRowId", "getNClob", "getSQLXML", "getURL", "getNString",
-                    "getNCharacterStream", "getCharacterStream", "getAsciiStream", "getBinaryStream")
+            .name(n -> n.startsWith("get"))
             .addParametersMatcher("int")
             .build();
     private static final Pattern SELECTED_COLUMNS_PATTERN = Pattern.compile("SELECT\\s+(.*)\\s+FROM\\s+.*");
