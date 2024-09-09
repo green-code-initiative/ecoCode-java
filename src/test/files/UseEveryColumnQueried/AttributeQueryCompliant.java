@@ -23,20 +23,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UseEveryColumnQueriedNonCompliant2 {
+/**
+ * This is the nominal test case, where the SQL query is an attribute of the class.
+ * All Fields are accessed, so no issue is raised
+ */
+public class AttributeQueryCompliant {
 
 	private static final String DB_URL = "jdbc:mysql://localhost/TEST";
 	private static final String USER = "guest";
 	private static final String PASS = "guest123";
+	private static final String QUERY = "SELECT id, first, last, age FROM Registration";
 
 	public void callJdbc() {
 
 		try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT id, first, last, age FROM Registration");) { // Noncompliant {{Avoid querying SQL columns that are not used}}
+				ResultSet rs = stmt.executeQuery(QUERY);) {
 			while (rs.next()) {
 				// Display values
 				System.out.print("ID: " + rs.getInt("id"));
+				System.out.print(", Age: " + rs.getInt("age"));
 				System.out.print(", First: " + rs.getString("first"));
 				System.out.println(", Last: " + rs.getString("last"));
 			}
@@ -45,6 +51,4 @@ public class UseEveryColumnQueriedNonCompliant2 {
 		}
 
 	}
-	
-	
 }

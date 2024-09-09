@@ -23,7 +23,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UseEveryColumnQueriedCompliant4 {
+/**
+ * In this test case, columns are accesed by IDs and names, some of them being in final variables
+ * All Fields are accessed, so no issue is raised
+ */
+public class UseColumnIdsAndNameAttributesCompliant {
 
 	private static final String DB_URL = "jdbc:mysql://localhost/TEST";
 	private static final String USER = "guest";

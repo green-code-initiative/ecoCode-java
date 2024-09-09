@@ -1,10 +1,3 @@
-package fr.greencodeinitiative.java.checks;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 /*
  * ecoCode - Java language - Provides rules to reduce the environmental footprint of your Java programs
  * Copyright © 2023 Green Code Initiative (https://www.ecocode.io)
@@ -22,39 +15,37 @@ import java.sql.Statement;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-public class UseEveryColumnQueriedNonCompliant5 {
+package fr.greencodeinitiative.java.checks;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+/**
+ * In this test case, columns are accesed by IDs and names, some of them being in final variables
+ * One field is not accesed, so an issue is raised
+ */
+public class UseColumnIdsAndNameAttributesNonCompliant {
 
 	private static final String DB_URL = "jdbc:mysql://localhost/TEST";
 	private static final String USER = "guest";
 	private static final String PASS = "guest123";
-	private static final String QUERY = "SELECT id, first, last, age FROM Registration"; 
-	private static final String QUERY2 = "SELECT id, first, last, age FROM Registration2";
-	
-	
+	private static final String QUERY = "SELECT id, first, last, age FROM Registration";
+	private static final String ID = "id";
+
 	public void callJdbc() {
 
 		try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				Statement stmt = conn.createStatement();
-				) {
-			
-			ResultSet rs = stmt.executeQuery(QUERY); // Noncompliant {{Avoid querying SQL columns that are not used}}
+				ResultSet rs = stmt.executeQuery(QUERY);) { // Noncompliant {{Avoid querying SQL columns that are not used}}
 			while (rs.next()) {
 				// Display values
-				System.out.print("ID: " + rs.getInt("id"));
-				System.out.print(", First: " + rs.getString("first"));
+				System.out.print("ID: " + rs.getInt(ID));
+				System.out.print(", First: " + rs.getString(2));
 				System.out.println(", Last: " + rs.getString("last"));
 			}
-			rs = stmt.executeQuery(QUERY2);
-			
-			while (rs.next()) {
-				// Display values
-				System.out.print("Age: " + rs.getInt("age"));
-				System.out.print("ID: " + rs.getInt("id"));
-				System.out.print(", First: " + rs.getString("first"));
-				System.out.println(", Last: " + rs.getString("last"));
-			}
-			
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -122,6 +122,11 @@ public class UseEveryColumnQueried extends IssuableSubscriptionVisitor {
             return;
         }
 
+        //if selected columns includes "*", stop the search
+        if (selectedColumns.contains("*")) {
+            return;
+        }
+
         // get the ResultSet object and check it's validity
         Symbol resultSet = getResultSetNode(methodInvocationTree);
         if (resultSet == null) {

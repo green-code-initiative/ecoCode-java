@@ -23,7 +23,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UseEveryColumnQueriedCompliant6 {
+/**
+ * In this test case, the ResultSet is passed through a method
+ * All Fields are accessed, so no issue is raised
+ */
+public class UseMethodCompliant {
 
 	private static final String DB_URL = "jdbc:mysql://localhost/TEST";
 	private static final String USER = "guest";

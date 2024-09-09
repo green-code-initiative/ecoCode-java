@@ -23,29 +23,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UseEveryColumnQueriedCompliant2 {
+/**
+ * In this test case, the ResultSet is passed through a method
+ * One field is not accesed, so an issue is raised
+ */
+public class UseMethodNonCompliant {
 
 	private static final String DB_URL = "jdbc:mysql://localhost/TEST";
 	private static final String USER = "guest";
 	private static final String PASS = "guest123";
-
+	
 	public void callJdbc() {
 
 		try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT id, first, last, age FROM Registration");) {
-			while (rs.next()) {
-				// Display values
-				System.out.print("ID: " + rs.getInt("id"));
-				System.out.print(", Age: " + rs.getInt("age"));
-				System.out.print(", First: " + rs.getString("first"));
-				System.out.println(", Last: " + rs.getString("last"));
-			}
+				ResultSet rs = stmt.executeQuery("SELECT id, first, last, age FROM Registration");) { // Noncompliant {{Avoid querying SQL columns that are not used}}
+			extractGet(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
-	
+
+	private void extractGet(ResultSet rs) throws SQLException {
+		while (rs.next()) {
+			// Display values
+			System.out.print("ID: " + rs.getInt("id"));
+			System.out.print(", First: " + rs.getString("first"));
+			System.out.println(", Last: " + rs.getString("last"));
+		}
+	}
 }
