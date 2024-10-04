@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: Import plugin JAR files
         id: import_jar_files
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: ecocode-plugins
           path: target
