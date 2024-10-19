@@ -5,7 +5,7 @@
     <groupId>io.ecocode</groupId>
     <artifactId>ecocode-java-plugin</artifactId>
     <version>1.6.3-SNAPSHOT</version>
-    
+
     <packaging>sonar-plugin</packaging>
 
     <name>ecoCode - Java language</name>
@@ -53,8 +53,13 @@
         <sonar.organization>green-code-initiative</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-        <sonarqube.version>9.4.0.54424</sonarqube.version>
-        <sonarjava.version>7.19.0.31550</sonarjava.version>
+        <!-- Version of SonarQube for integration tests -->
+        <sonarqube.version>9.9.7.96285</sonarqube.version>
+        <!-- Version of the SonarQube APIs used by `ecocode-java-plugin` -->
+        <sonar.plugin.api.version>9.8.0.203</sonar.plugin.api.version>
+
+        <!-- Version of `sonar-java-plugin` that `ecocode-java-plugin` depends on  -->
+        <sonarjava.version>7.16.0.30901</sonarjava.version>
 
         <sonar-analyzer-commons.version>2.5.0.1358</sonar-analyzer-commons.version>
 
@@ -66,7 +71,7 @@
 
         <google.re2j>1.7</google.re2j>
 
-        <!-- temporary version waiting for real automatic release in ecocode repository -->
+        <!-- Version of ecoCode rules specifications implemented by this plugin -->
         <ecocode-rules-specifications.version>1.6.5</ecocode-rules-specifications.version>
 
     </properties>
@@ -88,9 +93,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.sonarsource.sonarqube</groupId>
+            <groupId>org.sonarsource.api.plugin</groupId>
             <artifactId>sonar-plugin-api</artifactId>
-            <version>${sonarqube.version}</version>
+            <version>${sonar.plugin.api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -333,8 +338,11 @@
                         <licenseSet>
                             <header>com/mycila/maven/plugin/license/templates/GPL-3.txt</header>
                             <includes>
-                                <include>**/*.java</include>
+                                <include>${project.basedir}/src/**/*.java</include>
                             </includes>
+                            <excludes>
+                                <exclude>${project.basedir}/src/it/test-projects/**</exclude>
+                            </excludes>
                         </licenseSet>
                     </licenseSets>
                 </configuration>
