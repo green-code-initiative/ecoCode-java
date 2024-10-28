@@ -17,7 +17,11 @@
  */
 package fr.greencodeinitiative.java;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
+import org.reflections.Reflections;
+import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.CheckRegistrar;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,10 +34,14 @@ class JavaCheckRegistrarTest {
 
         final JavaCheckRegistrar registrar = new JavaCheckRegistrar();
         registrar.register(context);
-
-        assertThat(context.checkClasses()).hasSize(16);
+        assertThat(context.checkClasses())
+                .describedAs("All implemented rules must be registered into " + JavaCheckRegistrar.class)
+                .containsExactlyInAnyOrder(getDefinedRules().toArray(new Class[0]));
         assertThat(context.testCheckClasses()).isEmpty();
-
     }
 
+    static Set<Class<?>> getDefinedRules() {
+        Reflections r = new Reflections(JavaCheckRegistrar.class.getPackageName() + ".checks");
+        return r.getTypesAnnotatedWith(Rule.class);
+    }
 }

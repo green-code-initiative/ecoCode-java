@@ -28,6 +28,7 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Rule;
 import org.sonar.api.utils.Version;
 
+import static fr.greencodeinitiative.java.JavaCheckRegistrar.ANNOTATED_RULE_CLASSES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -35,8 +36,6 @@ import static org.mockito.Mockito.mock;
 class JavaRulesDefinitionTest {
 
     private RulesDefinition.Repository repository;
-
-    private int rulesSize;
 
     @BeforeEach
     void init() {
@@ -46,7 +45,6 @@ class JavaRulesDefinitionTest {
         RulesDefinition.Context context = new RulesDefinition.Context();
         rulesDefinition.define(context);
         repository = context.repository(rulesDefinition.repositoryKey());
-        rulesSize = 15;
     }
 
     @Test
@@ -55,12 +53,11 @@ class JavaRulesDefinitionTest {
         assertThat(repository.name()).isEqualTo("ecoCode");
         assertThat(repository.language()).isEqualTo("java");
         assertThat(repository.key()).isEqualTo("ecocode-java");
-        assertThat(repository.rules()).hasSize(rulesSize);
     }
 
     @Test
     void testRegistredRules() {
-        assertThat(repository.rules()).hasSize(rulesSize);
+        assertThat(repository.rules()).hasSize(ANNOTATED_RULE_CLASSES.size());
     }
 
     @Test
