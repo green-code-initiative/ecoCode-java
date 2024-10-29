@@ -86,7 +86,7 @@
         <test-it.sonarjava.version>${sonarjava.version}</test-it.sonarjava.version>
 
         <!-- SonarQube server listening port. Leave this property blank to automatically choose an available port. -->
-        <test-it.sonarqube.port></test-it.sonarqube.port>
+        <test-it.sonarqube.port />
     </properties>
 
     <dependencies>
@@ -466,7 +466,7 @@
                                 <!-- Comma separated list of plugins (`groupId|artifactId|version` or `file:///`) to install in SonarQube instance before lunching integration tests -->
                                 <test-it.plugins>
                                     ${project.baseUri}/target/${project.artifactId}-${project.version}.jar,
-                                    org.sonarsource.java|sonar-java-plugin|${test-it.sonarjava.version},
+                                    org.sonarsource.java:sonar-java-plugin:${test-it.sonarjava.version},
                                 </test-it.plugins>
                                 <!-- Comma separated JSON profile file URIs to load -->
                                 <test-it.additional-profile-uris>

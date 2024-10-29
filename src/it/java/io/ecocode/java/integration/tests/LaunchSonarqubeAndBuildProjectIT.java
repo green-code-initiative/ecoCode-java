@@ -218,6 +218,10 @@ class LaunchSonarqubeAndBuildProjectIT {
 		return splitAndTrim(value, "\\s*\\|\\s*");
 	}
 
+	private static Stream<String> colonSeparatedValues(String value) {
+		return splitAndTrim(value, "\\s*\\:\\s*");
+	}
+
 	private static Stream<String> splitAndTrim(String value, String regexSeparator) {
 		return Stream
 				.of(value.split(regexSeparator))
@@ -226,9 +230,13 @@ class LaunchSonarqubeAndBuildProjectIT {
 	}
 
 	private static Set<Location> additionalPluginsToInstall() {
-		return commaSeparatedValues(systemProperty("test-it.plugins"))
+		Set<Location> plugins = commaSeparatedValues(systemProperty("test-it.plugins"))
 				.map(LaunchSonarqubeAndBuildProjectIT::toPluginLocation)
 				.collect(Collectors.toSet());
+		commaSeparatedValues(System.getProperty("test-it.additional-plugins", ""))
+				.map(LaunchSonarqubeAndBuildProjectIT::toPluginLocation)
+				.forEach(plugins::add);
+		return plugins;
 	}
 
 	private static Set<URLLocation> additionalProfiles() {
@@ -262,9 +270,9 @@ class LaunchSonarqubeAndBuildProjectIT {
 				throw new IllegalArgumentException(e);
 			}
 		}
-		List<String> pluginGAVvalues = pipeSeparatedValues(location).collect(toList());
+		List<String> pluginGAVvalues = colonSeparatedValues(location).collect(toList());
 		if (pluginGAVvalues.size() != 3) {
-			throw new IllegalArgumentException("Invalid plugin GAV definition (`groupId|artifactId|version`): " + location);
+			throw new IllegalArgumentException("Invalid plugin GAV definition (`groupId:artifactId:version`): " + location);
 		}
 		return MavenLocation.of(
 				// groupId
