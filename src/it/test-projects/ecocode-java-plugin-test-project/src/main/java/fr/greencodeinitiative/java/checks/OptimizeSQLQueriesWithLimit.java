@@ -1,3 +1,5 @@
+package fr.greencodeinitiative.java.checks;
+
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.ArrayList;

@@ -1,3 +1,5 @@
+package fr.greencodeinitiative.java.checks;
+
 import java.util.Arrays;
 
 class ArrayCopyCheck {
