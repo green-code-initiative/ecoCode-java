@@ -74,6 +74,19 @@
         <!-- Version of ecoCode rules specifications implemented by this plugin -->
         <ecocode-rules-specifications.version>1.6.5</ecocode-rules-specifications.version>
 
+        <!-- URL of the Maven repository where sonarqube will be downloaded -->
+        <test-it.orchestrator.artifactory.url>https://repo1.maven.org/maven2</test-it.orchestrator.artifactory.url>
+        <!-- You can override this property to keep SonarQube instance running and to manually use it -->
+        <test-it.sonarqube.keepRunning>false</test-it.sonarqube.keepRunning>
+
+        <!-- Version of `sonarqube` used by integration tests (you can override this value to perform matrix compatibility tests) -->
+        <test-it.sonarqube.version>${sonarqube.version}</test-it.sonarqube.version>
+
+        <!-- Version of `sonar-java-plugin` used by integration tests (you can override this value to perform matrix compatibility tests) -->
+        <test-it.sonarjava.version>${sonarjava.version}</test-it.sonarjava.version>
+
+        <!-- SonarQube server listening port. Leave this property blank to automatically choose an available port. -->
+        <test-it.sonarqube.port></test-it.sonarqube.port>
     </properties>
 
     <dependencies>
@@ -145,6 +158,44 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Dependencies used by integration tests -->
+        <dependency>
+            <groupId>org.sonarsource.orchestrator</groupId>
+            <artifactId>sonar-orchestrator-junit5</artifactId>
+            <version>4.9.0.1920</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.java</groupId>
+            <artifactId>test-classpath-reader</artifactId>
+            <version>8.5.0.37199</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.sonarqube</groupId>
+            <artifactId>sonar-ws</artifactId>
+            <version>${sonarqube.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jycr</groupId>
+            <artifactId>java-data-url-handler</artifactId>
+            <version>0.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.13</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -356,6 +407,94 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- activate integration tests -->
+            <plugin>
+                <!-- add integration test sources into test classpath -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>add-integration-test-sources</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/src/it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-integration-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/it/resources</directory>
+                                </resource>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>${project.basedir}/src/it/resources-filtered</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Execute integration tests -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <test-it.sonarqube.keepRunning>${test-it.sonarqube.keepRunning}</test-it.sonarqube.keepRunning>
+                                <test-it.orchestrator.artifactory.url>${test-it.orchestrator.artifactory.url}</test-it.orchestrator.artifactory.url>
+                                <test-it.sonarqube.version>${test-it.sonarqube.version}</test-it.sonarqube.version>
+                                <test-it.sonarqube.port>${test-it.sonarqube.port}</test-it.sonarqube.port>
+                                <!-- Comma separated list of plugins (`groupId|artifactId|version` or `file:///`) to install in SonarQube instance before lunching integration tests -->
+                                <test-it.plugins>
+                                    ${project.baseUri}/target/${project.artifactId}-${project.version}.jar,
+                                    org.sonarsource.java|sonar-java-plugin|${test-it.sonarjava.version},
+                                </test-it.plugins>
+                                <!-- Comma separated JSON profile file URIs to load -->
+                                <test-it.additional-profile-uris>
+                                    ${project.baseUri}/src/main/resources/fr/greencodeinitiative/java/ecoCode_way_profile.json,
+                                </test-it.additional-profile-uris>
+                                <!-- Comma separated paths of "test projects" to analyze. Syntaxe: `sonar.projectKey|sonar.projectName|project.pomUri` -->
+                                <test-it.test-projects>
+                                    io.ecocode:ecocode-java-plugin-test-project|ecoCode Java Sonar Plugin Test Project|${project.baseUri}/src/it/test-projects/ecocode-java-plugin-test-project/pom.xml,
+                                </test-it.test-projects>
+                                <!-- Comma separated list of profiles to associate to each "test project". Syntaxe: `language:profileName` -->
+                                <test-it.test-project-profile-by-language>
+                                    java|ecoCode way,
+                                </test-it.test-project-profile-by-language>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>keep-running</id>
+            <properties>
+                <test-it.sonarqube.keepRunning>true</test-it.sonarqube.keepRunning>
+                <test-it.sonarqube.port>9000</test-it.sonarqube.port>
+            </properties>
+        </profile>
+    </profiles>
 </project>
