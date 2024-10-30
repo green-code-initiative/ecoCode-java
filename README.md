@@ -34,8 +34,8 @@ You can give a try with a one command:
 
 ... then you can use Java test project repository to test the environment : see [Java test project in `./src/it/test-projects/ecocode-java-plugin-test-project`](./src/it/test-projects/ecocode-java-plugin-test-project)
 
-
 NB: To install other `ecocode` plugins, you can :
+
 - add JAVA System properties `Dtest-it.additional-plugins` with a comma separated list of plugin IDs (`groupId:artifactId:version`), or plugins JAR (`file://....`) to install.
 
   For example :
@@ -57,9 +57,10 @@ Ready to use binaries are available [from GitHub](https://github.com/green-code-
 🧩 Compatibility
 -----------------
 
-| Plugin version | SonarQube version   | Java version |
-|----------------|---------------------|--------------|
-| 1.6.+          | 9.4.+ LTS to 10.6.0 | 11 / 17      |
+| Plugin version | SonarQube version   | Java version                                                                                   |
+|----------------|---------------------|------------------------------------------------------------------------------------------------|
+| 1.6.+          | 9.4.+ LTS to 10.6.0 | 11 / 17                                                                                        |
+| 2.0.+          | 9.9.+ LTS to 10.6.0 | [17](https://docs.sonarsource.com/sonarqube/9.9/requirements/prerequisites-and-overview/#java) |
 
 > Compatibility table of versions lower than 1.4.+ are available from the
 > main [ecoCode repository](https://github.com/green-code-initiative/ecoCode#-plugins-version-compatibility).
