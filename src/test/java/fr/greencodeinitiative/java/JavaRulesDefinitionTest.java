@@ -72,9 +72,9 @@ class JavaRulesDefinitionTest {
 
     @Test
     void assertRuleProperties() {
-        Rule rule = repository.rule("EC67");
+        Rule rule = repository.rule("EC69");
         assertThat(rule).isNotNull();
-        assertThat(rule.name()).isEqualTo("Use ++i instead of i++");
+        assertThat(rule.name()).isEqualTo("Do not call a function when declaring a for-type loop");
         assertThat(rule.debtRemediationFunction().type()).isEqualTo(Type.CONSTANT_ISSUE);
         assertThat(rule.type()).isEqualTo(RuleType.CODE_SMELL);
     }
