@@ -31,7 +31,6 @@ import fr.greencodeinitiative.java.checks.AvoidSpringRepositoryCallInLoopOrStrea
 import fr.greencodeinitiative.java.checks.AvoidStatementForDMLQueries;
 import fr.greencodeinitiative.java.checks.AvoidUsageOfStaticCollections;
 import fr.greencodeinitiative.java.checks.FreeResourcesOfAutoCloseableInterface;
-import fr.greencodeinitiative.java.checks.IncrementCheck;
 import fr.greencodeinitiative.java.checks.InitializeBufferWithAppropriateSize;
 import fr.greencodeinitiative.java.checks.NoFunctionCallWhenDeclaringForLoop;
 import fr.greencodeinitiative.java.checks.OptimizeReadFileExceptions;
@@ -49,7 +48,6 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
 public class JavaCheckRegistrar implements CheckRegistrar {
     static final List<Class<? extends JavaCheck>> ANNOTATED_RULE_CLASSES = List.of(
             ArrayCopyCheck.class,
-            IncrementCheck.class,
             AvoidUsageOfStaticCollections.class,
             AvoidGettingSizeCollectionInLoop.class,
             AvoidRegexPatternNotStatic.class,
