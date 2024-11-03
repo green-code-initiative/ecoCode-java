@@ -72,7 +72,8 @@
         <google.re2j>1.7</google.re2j>
 
         <!-- Version of ecoCode rules specifications implemented by this plugin -->
-        <ecocode-rules-specifications.version>1.6.5</ecocode-rules-specifications.version>
+<!--        <ecocode-rules-specifications.version>1.6.5</ecocode-rules-specifications.version>-->
+        <ecocode-rules-specifications.version>EPITA_10-2024__ready-SNAPSHOT</ecocode-rules-specifications.version>
 
         <!-- URL of the Maven repository where sonarqube will be downloaded -->
         <test-it.orchestrator.artifactory.url>https://repo1.maven.org/maven2</test-it.orchestrator.artifactory.url>

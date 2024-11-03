@@ -2,6 +2,7 @@
   "name": "ecoCode way",
   "language": "java",
   "ruleKeys": [
+	  "EC0",
 	"EC1",
 	"EC2",
 	"EC3",
