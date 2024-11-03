@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#49](https://github.com/green-code-initiative/ecoCode-java/pull/49) Add test to ensure all Rules are registered
 - [#336](https://github.com/green-code-initiative/ecoCode/issues/336) [Adds Maven Wrapper](https://github.com/green-code-initiative/ecoCode-java/pull/67)
+- [#69](https://github.com/green-code-initiative/ecoCode-java/pull/69) correction of NullPointer in EC79 rule 
 
 ### Deleted
 
