@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.ecocode</groupId>
-    <artifactId>ecocode-java-plugin-test-project</artifactId>
+    <artifactId>ecocode-java-plugin-integrationtest-project</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <name>ecoCode Java Sonar Plugin - Integration Test Project</name>

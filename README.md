@@ -32,7 +32,7 @@ You can give a try with a one command:
 ./mvnw verify -Pkeep-running
 ```
 
-... then you can use Java test project repository to test the environment : see [Java test project in `./src/it/test-projects/ecocode-java-plugin-test-project`](./src/it/test-projects/ecocode-java-plugin-test-project)
+... then you can use Java test project repository to test the environment : see [Java test project in `./src/it/test-projects/ecocode-java-plugin-test-project`](./src/it/test-projects/ecocode-java-plugin-integrationtest-project)
 
 NB: To install other `ecocode` plugins, you can :
 

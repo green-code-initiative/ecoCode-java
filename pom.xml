@@ -474,7 +474,7 @@
                                 </test-it.additional-profile-uris>
                                 <!-- Comma separated paths of "test projects" to analyze. Syntaxe: `sonar.projectKey|sonar.projectName|project.pomUri` -->
                                 <test-it.test-projects>
-                                    io.ecocode:ecocode-java-plugin-test-project|ecoCode Java Sonar Plugin Test Project|${project.baseUri}/src/it/test-projects/ecocode-java-plugin-test-project/pom.xml,
+                                    io.ecocode:ecocode-java-plugin-integrationtest-project|ecoCode Java Sonar Plugin - Integration Test Project (for auto-check)|${project.baseUri}/src/it/test-projects/ecocode-java-plugin-integrationtest-project/pom.xml,
                                 </test-it.test-projects>
                                 <!-- Comma separated list of profiles to associate to each "test project". Syntaxe: `language:profileName` -->
                                 <test-it.test-project-profile-by-language>
