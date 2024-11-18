@@ -35,6 +35,7 @@ import fr.greencodeinitiative.java.checks.IncrementCheck;
 import fr.greencodeinitiative.java.checks.InitializeBufferWithAppropriateSize;
 import fr.greencodeinitiative.java.checks.NoFunctionCallWhenDeclaringForLoop;
 import fr.greencodeinitiative.java.checks.OptimizeReadFileExceptions;
+import fr.greencodeinitiative.java.checks.UseEveryColumnQueried;
 import org.sonar.plugins.java.api.CheckRegistrar;
 import org.sonar.plugins.java.api.JavaCheck;
 import org.sonarsource.api.sonarlint.SonarLintSide;
@@ -62,7 +63,8 @@ public class JavaCheckRegistrar implements CheckRegistrar {
             InitializeBufferWithAppropriateSize.class,
             AvoidSetConstantInBatchUpdate.class,
             FreeResourcesOfAutoCloseableInterface.class,
-            AvoidMultipleIfElseStatement.class
+            AvoidMultipleIfElseStatement.class,
+            UseEveryColumnQueried.class
     );
 
     /**
