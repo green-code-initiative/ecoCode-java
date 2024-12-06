@@ -26,7 +26,7 @@ import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.Tree.Kind;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
-@Rule(key = "EC67")
+@Rule(key = "GCI67")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "S67")
 public class IncrementCheck extends IssuableSubscriptionVisitor {
 

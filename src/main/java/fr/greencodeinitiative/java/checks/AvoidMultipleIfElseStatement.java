@@ -43,7 +43,7 @@ import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
  * - an "ELSE" statement is considered as a second IF statement using the same variables used on previous
  * - IF and ELSEIF statements are considered as an IF statement
  */
-@Rule(key = "EC2")
+@Rule(key = "GCI2")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "AMIES")
 public class AvoidMultipleIfElseStatement extends IssuableSubscriptionVisitor {
 

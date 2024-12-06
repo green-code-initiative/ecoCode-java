@@ -27,7 +27,7 @@ import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.Tree.Kind;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
-@Rule(key = "EC32")
+@Rule(key = "GCI32")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "GRSP0032")
 public class InitializeBufferWithAppropriateSize extends IssuableSubscriptionVisitor {
 

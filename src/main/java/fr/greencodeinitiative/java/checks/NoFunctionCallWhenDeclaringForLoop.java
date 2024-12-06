@@ -37,7 +37,7 @@ import org.sonar.plugins.java.api.tree.PackageDeclarationTree;
 import org.sonar.plugins.java.api.tree.Tree;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
-@Rule(key = "EC69")
+@Rule(key = "GCI69")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "S69")
 public class NoFunctionCallWhenDeclaringForLoop extends IssuableSubscriptionVisitor {
 

@@ -28,7 +28,7 @@ import org.sonarsource.analyzer.commons.RuleMetadataLoader;
  * That allows to list the rules in the page "Rules".
  */
 public class JavaRulesDefinition implements RulesDefinition {
-    private static final String RESOURCE_BASE_PATH = "io/ecocode/rules/java";
+    private static final String RESOURCE_BASE_PATH = "org/green-code-initiative/rules/java";
 
     private static final String NAME = "ecoCode";
     static final String LANGUAGE = "java";

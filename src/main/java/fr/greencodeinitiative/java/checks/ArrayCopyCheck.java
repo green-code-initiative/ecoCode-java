@@ -53,7 +53,7 @@ import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
  * @author Aubay
  * @formatter:off
  */
-@Rule(key = "EC27")
+@Rule(key = "GCI27")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "GRPS0027")
 public class ArrayCopyCheck extends IssuableSubscriptionVisitor {
 

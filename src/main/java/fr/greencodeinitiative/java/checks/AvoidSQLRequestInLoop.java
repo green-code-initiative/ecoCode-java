@@ -30,7 +30,7 @@ import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.Tree.Kind;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
-@Rule(key = "EC72")
+@Rule(key = "GCI72")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "S72")
 public class AvoidSQLRequestInLoop extends IssuableSubscriptionVisitor {
 

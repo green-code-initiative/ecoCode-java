@@ -61,18 +61,18 @@ class JavaRulesDefinitionTest {
     }
 
     @Test
-    @DisplayName("All rule keys must be prefixed by 'EC'")
+    @DisplayName("All rule keys must be prefixed by 'GCI'")
     void testRuleKeyPrefix() {
         SoftAssertions assertions = new SoftAssertions();
         repository.rules().forEach(
-                rule -> assertions.assertThat(rule.key()).startsWith("EC")
+                rule -> assertions.assertThat(rule.key()).startsWith("GCI")
         );
         assertions.assertAll();
     }
 
     @Test
     void assertRuleProperties() {
-        Rule rule = repository.rule("EC67");
+        Rule rule = repository.rule("GCI67");
         assertThat(rule).isNotNull();
         assertThat(rule.name()).isEqualTo("Use ++i instead of i++");
         assertThat(rule.debtRemediationFunction().type()).isEqualTo(Type.CONSTANT_ISSUE);
