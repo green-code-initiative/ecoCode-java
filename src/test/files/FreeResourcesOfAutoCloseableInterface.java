@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.greencodeinitiative.java.checks;
+package org.greencodeinitiative.java.checks;
 
 import java.io.*;
 
@@ -43,7 +43,7 @@ class FreeResourcesOfAutoCloseableInterface {
             System.err.println(e.getMessage());
         } finally {
             if (fr) {
-                fr.close();
+                org.close();
             }
             if (br) {
                 br.close();

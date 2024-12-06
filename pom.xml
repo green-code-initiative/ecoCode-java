@@ -238,7 +238,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <pluginKey>ecocodejava</pluginKey>
-                    <pluginClass>fr.greencodeinitiative.java.JavaPlugin</pluginClass>
+                    <pluginClass>org.greencodeinitiative.java.JavaPlugin</pluginClass>
                     <sonarLintSupported>true</sonarLintSupported>
                     <pluginApiMinVersion>${sonarqube.version}</pluginApiMinVersion>
                     <skipDependenciesPackaging>true</skipDependenciesPackaging>
@@ -470,7 +470,7 @@
                                 </test-it.plugins>
                                 <!-- Comma separated JSON profile file URIs to load -->
                                 <test-it.additional-profile-uris>
-                                    ${project.baseUri}/src/main/resources/fr/greencodeinitiative/java/ecoCode_way_profile.json,
+                                    ${project.baseUri}/src/main/resources/org/greencodeinitiative/java/ecoCode_way_profile.json,
                                 </test-it.additional-profile-uris>
                                 <!-- Comma separated paths of "test projects" to analyze. Syntaxe: `sonar.projectKey|sonar.projectName|project.pomUri` -->
                                 <test-it.test-projects>
