@@ -35,6 +35,7 @@ import org.sonar.plugins.java.api.tree.WhileStatementTree;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
 @Rule(key = "GCI3")
+@DeprecatedRuleKey(repositoryKey = "ecocode-java", ruleKey = "EC3")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "GSCIL")
 public class AvoidGettingSizeCollectionInLoop extends IssuableSubscriptionVisitor {
     protected static final String MESSAGERULE = "Avoid getting the size of the collection in the loop";

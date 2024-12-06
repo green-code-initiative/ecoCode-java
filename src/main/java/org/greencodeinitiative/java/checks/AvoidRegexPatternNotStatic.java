@@ -33,6 +33,7 @@ import org.sonar.plugins.java.api.tree.Tree;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
 @Rule(key = "GCI77")
+@DeprecatedRuleKey(repositoryKey = "ecocode-java", ruleKey = "EC77")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "S77")
 public class AvoidRegexPatternNotStatic extends IssuableSubscriptionVisitor {
 

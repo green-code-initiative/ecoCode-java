@@ -40,6 +40,7 @@ import static org.sonar.plugins.java.api.tree.Tree.Kind.MEMBER_SELECT;
 import static org.sonar.plugins.java.api.tree.Tree.Kind.METHOD_INVOCATION;
 
 @Rule(key = "GCI78")
+@DeprecatedRuleKey(repositoryKey = "ecocode-java", ruleKey = "EC78")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "S78")
 public class AvoidSetConstantInBatchUpdate extends IssuableSubscriptionVisitor {
 

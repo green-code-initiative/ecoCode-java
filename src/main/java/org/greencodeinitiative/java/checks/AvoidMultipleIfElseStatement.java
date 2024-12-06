@@ -44,6 +44,7 @@ import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
  * - IF and ELSEIF statements are considered as an IF statement
  */
 @Rule(key = "GCI2")
+@DeprecatedRuleKey(repositoryKey = "ecocode-java", ruleKey = "EC2")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "AMIES")
 public class AvoidMultipleIfElseStatement extends IssuableSubscriptionVisitor {
 

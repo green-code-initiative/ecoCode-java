@@ -27,6 +27,7 @@ import org.sonar.plugins.java.api.tree.*;
 import org.sonarsource.analyzer.commons.annotations.DeprecatedRuleKey;
 
 @Rule(key = "GCI1")
+@DeprecatedRuleKey(repositoryKey = "ecocode-java", ruleKey = "EC1")
 @DeprecatedRuleKey(repositoryKey = "greencodeinitiative-java", ruleKey = "GRC1")
 public class AvoidSpringRepositoryCallInLoopOrStreamCheck extends IssuableSubscriptionVisitor {
 
