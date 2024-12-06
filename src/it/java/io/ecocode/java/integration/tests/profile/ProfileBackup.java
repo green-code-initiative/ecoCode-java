@@ -22,8 +22,8 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
  *  "name": "ecoCode way",
  *  "language": "java",
  *  "ruleKeys": [
- * 	    "EC1",
- * 	    "EC2"
+ * 	    "GCI1",
+ * 	    "GCI2"
  *  ]
  * }
  * </pre>
@@ -36,14 +36,14 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
  * 	&lt;rules&gt;
  * 		&lt;rule&gt;
  * 			&lt;repositoryKey&gt;ecocode-java&lt;/repositoryKey&gt;
- * 			&lt;key&gt;EC1&lt;/key&gt;
+ * 			&lt;key&gt;GCI1&lt;/key&gt;
  * 			&lt;type&gt;CODE_SMELL&lt;/type&gt;
  * 			&lt;priority&gt;MINOR&lt;/priority&gt;
  * 			&lt;parameters /&gt;
  * 		&lt;/rule&gt;
  * 		&lt;rule&gt;
  * 			&lt;repositoryKey&gt;ecocode-java&lt;/repositoryKey&gt;
- * 			&lt;key&gt;EC2&lt;/key&gt;
+ * 			&lt;key&gt;GCI2&lt;/key&gt;
  * 			&lt;type&gt;CODE_SMELL&lt;/type&gt;
  * 			&lt;priority&gt;MINOR&lt;/priority&gt;
  * 			&lt;parameters /&gt;
