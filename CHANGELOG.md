@@ -9,11 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- [#59](https://github.com/green-code-initiative/ecoCode-java/pull/59) Add builtin profile `ecoCode way` to aggregate all implemented ecoCode rules by this plugin
+- [#53](https://github.com/green-code-initiative/ecoCode-java/issues/53) Improve integration tests
+
 ### Changed
 
 - [#21](https://github.com/green-code-initiative/ecoCode-java/issues/21) Improvement: some method calls are legitimate in a for loop expression.
+- [#49](https://github.com/green-code-initiative/ecoCode-java/pull/49) Add test to ensure all Rules are registered
+- [#336](https://github.com/green-code-initiative/ecoCode/issues/336) [Adds Maven Wrapper](https://github.com/green-code-initiative/ecoCode-java/pull/67)
 
 ### Deleted
+
+## [1.6.2] - 2024-07-21
+
+### Changed
+
+- [#60](https://github.com/green-code-initiative/ecoCode-java/issues/60) Check + update for SonarQube 10.6.0 compatibility
+- refactoring docker system
+- upgrade ecocode-rules-specifications to 1.6.2
 
 ## [1.6.1] - 2024-05-15
 
