@@ -59,20 +59,26 @@ public class NoFunctionCallWhenDeclaringForLoop extends IssuableSubscriptionVisi
             method.condition().accept(invocationMethodVisitor);
         }
         // update
-        // initaliser
         method.update().accept(invocationMethodVisitor);
-        method.initializer().accept(invocationMethodVisitor);
     }
 
     private class MethodInvocationInForStatementVisitor extends BaseTreeVisitor {
 
         @Override
         public void visitMethodInvocation(MethodInvocationTree tree) {
-            if (!lineAlreadyHasThisIssue(tree)) {
+            if (!lineAlreadyHasThisIssue(tree) && !isIteratorMethod(tree)) {
                 report(tree);
                 return;
             }
             super.visitMethodInvocation(tree);
+        }
+
+        private boolean isIteratorMethod(MethodInvocationTree tree) {
+            boolean isIterator = tree.methodSymbol().owner().type().isSubtypeOf("java.util.Iterator");
+            String methodName = tree.methodSelect().lastToken().text();
+            boolean isMethodNext = methodName.equals("next");
+            boolean isMethodHasNext = methodName.equals("hasNext");
+            return isIterator && (isMethodNext || isMethodHasNext);
         }
 
         private boolean lineAlreadyHasThisIssue(Tree tree) {
