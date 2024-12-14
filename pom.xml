@@ -494,6 +494,7 @@
             <properties>
                 <test-it.sonarqube.keepRunning>true</test-it.sonarqube.keepRunning>
                 <test-it.sonarqube.port>9000</test-it.sonarqube.port>
+<!--                <test-it.sonarqube.port>33333</test-it.sonarqube.port>-->
             </properties>
         </profile>
     </profiles>

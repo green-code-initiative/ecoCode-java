@@ -74,7 +74,7 @@ class LaunchSonarqubeAndBuildProjectIT {
 	}
 
 	@BeforeAll
-	static void setup() {
+	static void setup() throws InterruptedException {
 		LOGGER.log(
 				INFO,
 				"\n" +
@@ -102,8 +102,20 @@ class LaunchSonarqubeAndBuildProjectIT {
 						)
 						.collect(Collectors.joining("\n", "\n\n", "\n\n"))
 		);
+		LOGGER.log(INFO, "----------");
+		LOGGER.log(INFO, "----- DDC ----- SonarQube starting ... Waiting 5 seconds before starting ...");
+		LOGGER.log(INFO, "----------");
+		Thread.sleep(5000);
 		launchSonarqube();
+		LOGGER.log(INFO, "----------");
+		LOGGER.log(INFO, "----- DDC ----- SonarQube server started. Waiting 5 seconds before launching analysis...");
+		LOGGER.log(INFO, "----------");
+		Thread.sleep(5000);
 		launchAnalysis();
+		LOGGER.log(INFO, "----------");
+		LOGGER.log(INFO, "----- DDC ----- Analysis done. Waiting 5 seconds before running tests...");
+		LOGGER.log(INFO, "----------");
+		Thread.sleep(5000);
 	}
 
 	private static void launchAnalysis() {
@@ -125,7 +137,7 @@ class LaunchSonarqubeAndBuildProjectIT {
 	}
 
 	@Test
-	void test() {
+	void test() throws InterruptedException {
 		String projectKey = analyzedProjects.get(0).projectKey;
 
 		Map<String, Measures.Measure> measures = getMeasures(projectKey);
@@ -136,7 +148,14 @@ class LaunchSonarqubeAndBuildProjectIT {
 		List<Issues.Issue> projectIssues = issuesForComponent(projectKey);
 		assertThat(projectIssues).isNotEmpty();
 
-		List<Issues.Issue> issuesForArrayCopyCheck = issuesForFile(projectKey, "src/main/java/fr/greencodeinitiative/java/checks/AvoidGettingSizeCollectionInForLoopIgnored.java");
+		String file = "src/main/java/fr/greencodeinitiative/java/checks/AvoidGettingSizeCollectionInForLoopIgnored.java";
+		List<Issues.Issue> issuesForArrayCopyCheck = issuesForFile(projectKey, file);
+
+		LOGGER.log(INFO, "----------");
+		LOGGER.log(INFO, () -> MessageFormat.format("----- DDC ----- Issues for file {0} : ", file));
+		LOGGER.log(INFO, () -> MessageFormat.format("{0}", issuesForArrayCopyCheck));
+		LOGGER.log(INFO, "----------");
+		Thread.sleep(5000);
 
 		assertThat(issuesForArrayCopyCheck)
 				.hasSize(1)
@@ -153,6 +172,9 @@ class LaunchSonarqubeAndBuildProjectIT {
 					assertThat(issue.getEffort()).isEqualTo("5min");
 					assertThat(issue.getType()).isEqualTo(CODE_SMELL);
 				});
+
+		LOGGER.log(INFO, "DDC - Test done. Waiting 5 seconds before stopping SonarQube server...");
+		Thread.sleep(5000);
 	}
 
 	@AfterAll
