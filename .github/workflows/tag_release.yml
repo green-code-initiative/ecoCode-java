@@ -70,5 +70,5 @@ jobs:
         with:
           upload_url: ${{needs.build.outputs.upload_url}}
           asset_path: target/creedengo-java-plugin-${{ github.ref_name }}.jar
-          asset_name: ecocode-java-plugin-${{ github.ref_name }}.jar
+          asset_name: creedengo-java-plugin-${{ github.ref_name }}.jar
           asset_content_type: application/zip
