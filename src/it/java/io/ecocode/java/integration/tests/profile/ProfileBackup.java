@@ -98,7 +98,7 @@ public class ProfileBackup {
 	}
 
 	private RuleMetadata loadRule(String language, String ruleKey) {
-		try (InputStream ruleMetadataJsonFile = ClassLoader.getSystemResourceAsStream("io/ecocode/rules/" + language + "/" + ruleKey + ".json")) {
+		try (InputStream ruleMetadataJsonFile = ClassLoader.getSystemResourceAsStream("org/green-code-initiative/rules/" + language + "/" + ruleKey + ".json")) {
 			RuleMetadata result = mapper.readValue(ruleMetadataJsonFile, RuleMetadata.class);
 			result.setKey(ruleKey);
 			return result;
