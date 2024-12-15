@@ -14,7 +14,7 @@ on:
 
 env:
   # github.repository as <account>/<repo>
-#  IMAGE_NAME: sonarqube-ecocode
+#  IMAGE_NAME: sonarqube-creedengo
 #  IMAGES: |
 #    ghcr.io/${{ github.repository_owner }}/sonarqube-ecocode
   IMAGE_NAME: sonarqube-ecocode-java
