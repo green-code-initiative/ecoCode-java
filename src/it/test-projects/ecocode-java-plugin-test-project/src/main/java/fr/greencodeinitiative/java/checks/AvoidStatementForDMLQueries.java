@@ -1,4 +1,4 @@
-package fr.greencodeinitiative.java.checks;
+package org.greencodeinitiative.java.checks;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -141,7 +141,7 @@ class LaunchSonarqubeAndBuildProjectIT {
 		assertThat(issuesForArrayCopyCheck)
 				.hasSize(1)
 				.first().satisfies(issue -> {
-					assertThat(issue.getRule()).isEqualTo("ecocode-java:EC69");
+					assertThat(issue.getRule()).isEqualTo("ecocode-java:GCI69");
 					assertThat(issue.getSeverity()).isEqualTo(MINOR);
 					assertThat(issue.getLine()).isEqualTo(18);
 					assertThat(issue.getTextRange().getStartLine()).isEqualTo(18);

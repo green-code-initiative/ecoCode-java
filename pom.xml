@@ -10,7 +10,7 @@
 
     <name>ecoCode - Java language</name>
     <description>Provides rules to reduce the environmental footprint of your Java programs</description>
-    <inceptionYear>2023</inceptionYear>
+    <inceptionYear>2024</inceptionYear>
 
     <url>https://github.com/green-code-initiative/ecoCode-java</url>
     <organization>
@@ -71,8 +71,8 @@
 
         <google.re2j>1.7</google.re2j>
 
-        <!-- Version of ecoCode rules specifications implemented by this plugin -->
-        <ecocode-rules-specifications.version>1.6.5</ecocode-rules-specifications.version>
+        <!-- Version of creedengo rules specifications implemented by this plugin -->
+        <creedengo-rules-specifications.version>2.0.0</creedengo-rules-specifications.version>
 
         <!-- URL of the Maven repository where sonarqube will be downloaded -->
         <test-it.orchestrator.artifactory.url>https://repo1.maven.org/maven2</test-it.orchestrator.artifactory.url>
@@ -91,9 +91,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ecocode-rules-specifications</artifactId>
-            <version>${ecocode-rules-specifications.version}</version>
+            <groupId>org.green-code-initiative</groupId>
+            <artifactId>creedengo-rules-specifications</artifactId>
+            <version>${creedengo-rules-specifications.version}</version>
             <classifier>java</classifier>
         </dependency>
 
@@ -238,7 +238,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <pluginKey>ecocodejava</pluginKey>
-                    <pluginClass>fr.greencodeinitiative.java.JavaPlugin</pluginClass>
+                    <pluginClass>org.greencodeinitiative.java.JavaPlugin</pluginClass>
                     <sonarLintSupported>true</sonarLintSupported>
                     <pluginApiMinVersion>${sonarqube.version}</pluginApiMinVersion>
                     <skipDependenciesPackaging>true</skipDependenciesPackaging>
@@ -470,7 +470,7 @@
                                 </test-it.plugins>
                                 <!-- Comma separated JSON profile file URIs to load -->
                                 <test-it.additional-profile-uris>
-                                    ${project.baseUri}/src/main/resources/fr/greencodeinitiative/java/ecoCode_way_profile.json,
+                                    ${project.baseUri}/src/main/resources/org/greencodeinitiative/java/ecoCode_way_profile.json,
                                 </test-it.additional-profile-uris>
                                 <!-- Comma separated paths of "test projects" to analyze. Syntaxe: `sonar.projectKey|sonar.projectName|project.pomUri` -->
                                 <test-it.test-projects>
