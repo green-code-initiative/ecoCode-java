@@ -1,5 +1,5 @@
 ARG MAVEN_BUILDER=3-openjdk-17-slim
-ARG SONARQUBE_VERSION=10.6.0-community
+ARG SONARQUBE_VERSION=10.7.0-community
 
 FROM maven:${MAVEN_BUILDER} AS builder
 
