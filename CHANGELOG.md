@@ -9,16 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deleted
+
+## [2.0.0] - 2024-12-18
+
+### Added
+
 - [#59](https://github.com/green-code-initiative/creedengo-java/pull/59) Add builtin profile `ecoCode way` to aggregate all implemented ecoCode rules by this plugin
 - [#53](https://github.com/green-code-initiative/creedengo-java/issues/53) Improve integration tests
 - Rename rules ECXXX to the new Green Code Initiative naming convention GCIXXX
+- migration from ecocode to creedengo - all over the code
 
 ### Changed
 
 - [#49](https://github.com/green-code-initiative/creedengo-java/pull/49) Add test to ensure all Rules are registered
 - [#336](https://github.com/green-code-initiative/creedengo-rules-specifications/issues/336) [Adds Maven Wrapper](https://github.com/green-code-initiative/creedengo-java/pull/67)
-
-### Deleted
 
 ## [1.6.2] - 2024-07-21
 
@@ -68,7 +75,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update ecocode-rules-specifications to 1.4.6
 
-[unreleased](https://github.com/green-code-initiative/creedengo-java/compare/1.6.1...HEAD)
+[unreleased](https://github.com/green-code-initiative/creedengo-java/compare/2.0.0...HEAD)
+[2.0.0](https://github.com/green-code-initiative/creedengo-java/compare/1.6.2...2.0.0)
+[1.6.2](https://github.com/green-code-initiative/creedengo-java/compare/1.6.1...1.6.2)
 [1.6.1](https://github.com/green-code-initiative/creedengo-java/compare/1.6.0...1.6.1)
 [1.6.0](https://github.com/green-code-initiative/creedengo-java/compare/1.5.2...1.6.0)
 [1.5.2](https://github.com/green-code-initiative/creedengo-java/compare/1.5.1...1.5.2)
